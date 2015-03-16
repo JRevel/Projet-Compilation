@@ -25,8 +25,8 @@ public class Main {
 			// create a parser that feeds off the tokens buffer
 			CompilParser parser = new CompilParser(tokens);
 			// begin parsing at rule r
-			CommonTree AST = (CommonTree)parser.program().getTree();
-			SymbolTable symbols = new SymbolTable(new SyntaxicTree(AST));
+			SyntaxicTree AST = new SyntaxicTree((CommonTree)parser.program().getTree());
+			SymbolTable symbols = new SymbolTable(AST);
 			System.out.println(symbols);
 		} catch (IOException e) {
 			e.printStackTrace();

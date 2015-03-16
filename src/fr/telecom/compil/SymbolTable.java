@@ -222,6 +222,28 @@ public class SymbolTable
 			return symbols.get(symbolName);
 		}
 		
+		public FunctionSymbol getFunction(String functionName) throws SymbolNotFoundException
+		{
+			if(!functionSymbols.containsKey(functionName))
+			{
+				if(parent == null)
+					throw new SymbolNotFoundException(functionName);
+				return parent.getFunction(functionName);
+			}
+			return functionSymbols.get(functionName);
+		}
+		
+		public ProcSymbol getProc(String procName) throws SymbolNotFoundException
+		{
+			if(!procSymbols.containsKey(procName))
+			{
+				if(parent == null)
+					throw new SymbolNotFoundException(procName);
+				return parent.getProc(procName);
+			}
+			return procSymbols.get(procName);
+		}
+		
 		public String toString()
 		{
 			String result = "Parent : ";
@@ -271,5 +293,9 @@ public class SymbolTable
 		{
 			return "Variable " + symbolName + " not declared in scope";
 		}
+	}
+
+	public boolean hasSymbol(String varName, int scopeId) {
+		return scopes.get(scopeId).symbols.containsKey(varName);
 	}
 }

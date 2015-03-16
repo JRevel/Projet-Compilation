@@ -11,7 +11,7 @@ public class SyntaxicTree
 	public SyntaxicTree(Tree tree)
 	{
 		this.tree = tree;
-	}
+	} 
 	
 	public SyntaxicTree getChild(int id)
 	{
