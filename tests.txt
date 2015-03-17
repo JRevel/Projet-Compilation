@@ -4,10 +4,11 @@
 
 	function integer fMax (adr x: integer, y: integer)
     		integer result
-    		if x > y 
+    		if x > y
 			then result = x
         		else result = y
 		fi
+		t[5] = 20
     		return (result)
 	end
 

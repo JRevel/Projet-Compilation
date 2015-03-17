@@ -27,6 +27,7 @@ public class Main {
 			// begin parsing at rule r
 			SyntaxicTree AST = new SyntaxicTree((CommonTree)parser.program().getTree());
 			SymbolTable symbols = new SymbolTable(AST);
+			SemanticAnalyser.checkScope(AST, symbols);
 			System.out.println(symbols);
 		} catch (IOException e) {
 			e.printStackTrace();

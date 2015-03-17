@@ -296,6 +296,7 @@ public class SymbolTable
 	}
 
 	public boolean hasSymbol(String varName, int scopeId) {
-		return scopes.get(scopeId).symbols.containsKey(varName);
+		Scope scope = scopes.get(scopeId);
+		return (scope.symbols.containsKey(varName) || (scope.parent != null && hasSymbol(varName, scope.parent.getId())));
 	}
 }

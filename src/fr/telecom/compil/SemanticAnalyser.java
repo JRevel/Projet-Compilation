@@ -4,26 +4,55 @@ import fr.telecom.compil.exceptions.VarNotFoundException;
 
 public class SemanticAnalyser
 {
-	public static void check(SyntaxicTree AST)
+	private static int currentScope = 0;
+	
+	public static void initSemanticAnalysis()
 	{
-		
+		currentScope = 0;
+	}
+	public static void checkScope(SyntaxicTree AST, SymbolTable table)
+	{
+		try {
+			checkInstructions(AST.getChild("INSTRUCTIONS"), currentScope, table);
+			SyntaxicTree declTree = AST.getChild("DECLARATIONS");
+			for(SyntaxicTree functionTree : declTree.getChildren("FUNCTION"))
+			{
+				currentScope++;
+				checkScope(functionTree, table);
+			}
+			for(SyntaxicTree procTree : declTree.getChildren("PROC"))
+			{
+				currentScope++;
+				checkScope(procTree, table);
+			}
+		} catch (VarNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public static void checkVarDef(SyntaxicTree varTree, int scopeId, SymbolTable table) throws VarNotFoundException
+	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException
 	{
-		if(varTree.getLabel().equals("VAR"))
+		checkVarDef(AST, scopeId, table);
+		for(int i=0; i<AST.getChildCount(); i++)
+			checkInstructions(AST.getChild(i), scopeId, table);
+	}
+	
+	private static void checkVarDef(SyntaxicTree varTree, int scopeId, SymbolTable table) throws VarNotFoundException
+	{
+		if(varTree.getLabel().equals("VAR_REF"))
 		{
-			SyntaxicTree tree = varTree.getChild(0);
-			if(tree.getLabel().equals("ARRAY_ACCESS"))
+			SyntaxicTree child = varTree.getChild(0);
+			if(child.getLabel().equals("ARRAY_ACCESS"))
 			{
-				String varName = tree.getChild("NAME").getChild(0).getLabel();
-				if(!table.hasSymbol(varName, scopeId))
-					throw new VarNotFoundException(varName, scopeId);
+				String name = child.getChild("NAME").getChild(0).getLabel();
+				if(!table.hasSymbol(name, scopeId))
+					throw new VarNotFoundException(name, scopeId);
 			}
 			else
 			{
-				if(!table.hasSymbol(tree.getLabel(), scopeId))
-					throw new VarNotFoundException(tree.getLabel(), scopeId);
+				String name = child.getLabel();
+				if(!table.hasSymbol(name, scopeId))
+					throw new VarNotFoundException(name, scopeId);
 			}
 		}
 		else
