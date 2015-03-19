@@ -2,6 +2,10 @@ package fr.telecom.compil.exceptions;
 
 public class VarNotFoundException extends SemanticException
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String varName;
 	private int scopeId;
 	private int lineNumber;
