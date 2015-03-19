@@ -18,6 +18,11 @@ public class SyntaxicTree
 		return new SyntaxicTree((Tree)(tree.getChild(id)));
 	}
 	
+	public SyntaxicTree getChild()
+	{
+		return new SyntaxicTree((Tree)(tree.getChild(0)));
+	}
+	
 	public SyntaxicTree getChild(String label)
 	{
 		for(int i=0; i<tree.getChildCount(); i++)

@@ -33,6 +33,8 @@ public class SemanticAnalyser
 	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException
 	{
 		checkVarDef(AST, scopeId, table);
+		
+		
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
 	}
@@ -44,7 +46,7 @@ public class SemanticAnalyser
 		if(varTree.getLabel().equals("VAR_REF"))
 		{
 			//on récupère le nom de la variable, c'est le label du seul fils du noeud VAR_REF
-			SyntaxicTree child = varTree.getChild(0);
+			SyntaxicTree child = varTree.getChild();
 			String name = child.getLabel();
 			// et on lance une exception si la variable n'est pas dans la table des symboles
 			if(!table.hasSymbol(name, scopeId))
