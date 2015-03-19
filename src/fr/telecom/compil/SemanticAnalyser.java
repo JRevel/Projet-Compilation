@@ -1,5 +1,8 @@
 package fr.telecom.compil;
 
+import fr.telecom.compil.SymbolTable.SymbolNotFoundException;
+import fr.telecom.compil.exceptions.BadNumberArgumentsException;
+import fr.telecom.compil.exceptions.SemanticException;
 import fr.telecom.compil.exceptions.VarNotFoundException;
 
 public class SemanticAnalyser
@@ -25,15 +28,19 @@ public class SemanticAnalyser
 				currentScope++;
 				checkScope(procTree, table);
 			}
-		} catch (VarNotFoundException e) {
+		} catch (SemanticException e) {
 			System.err.println(e.getMessage());
+		} catch (SymbolNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
-	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException
+	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException
 	{
 		checkVarDef(AST, scopeId, table);
-		
+		checkNbArgFunc(AST,scopeId,table);
+		checkNbArgProc(AST,scopeId,table);
 		
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
@@ -58,6 +65,31 @@ public class SemanticAnalyser
 			String name = nameTree.getLabel();
 			if(!table.hasSymbol(name, scopeId))
 				throw new VarNotFoundException(nameTree.getLineNumber(), name, scopeId);
+		}
+	}
+	
+	private static void checkNbArgFunc(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadNumberArgumentsException
+	{
+		if (varTree.getLabel().equals("FUNC_CALL"))
+		{
+			String name = varTree.getChild("NAME").getChild().getLabel();
+			SyntaxicTree child = varTree.getChild("ARGS");
+			int ASTSize = child.getChildren().size();
+			int tableSize = table.getFunction(name, scopeId).args.length;
+			if(ASTSize!=tableSize)
+				throw new BadNumberArgumentsException(varTree.getLineNumber(), name, ASTSize, tableSize);
+		}
+	}
+	private static void checkNbArgProc(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadNumberArgumentsException
+	{
+		if (varTree.getLabel().equals("PROC_CALL"))
+		{
+			String name = varTree.getChild("NAME").getChild().getLabel();
+			SyntaxicTree child = varTree.getChild("ARGS");
+			int ASTSize = child.getChildren().size();
+			int tableSize = table.getProc(name, scopeId).args.length;
+			if(ASTSize!=tableSize)
+				throw new BadNumberArgumentsException(varTree.getLineNumber(), name, ASTSize, tableSize);
 		}
 	}
 }

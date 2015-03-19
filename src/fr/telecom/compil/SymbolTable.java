@@ -33,7 +33,7 @@ public class SymbolTable
 		return result;
 	}
 	
-	private class Symbol
+	public class Symbol
 	{
 		public Symbol(String name, VarType type, boolean adr, int disp)
 		{
@@ -54,7 +54,7 @@ public class SymbolTable
 		}
 	}
 	
-	private class FunctionSymbol
+	public class FunctionSymbol
 	{
 		public String name;
 		public VarType returnType;
@@ -82,7 +82,7 @@ public class SymbolTable
 		}
 	}
 	
-	private class ProcSymbol
+	public class ProcSymbol
 	{
 		public String name;
 		public Symbol[] args;
@@ -108,7 +108,7 @@ public class SymbolTable
 		}
 	}
 	
-	private class Scope
+	public class Scope
 	{
 		private Map<String, Symbol> symbols = new HashMap<String, Symbol>();
 		private Map<String, FunctionSymbol> functionSymbols = new HashMap<String, FunctionSymbol>();
@@ -302,8 +302,22 @@ public class SymbolTable
 		}
 	}
 
-	public boolean hasSymbol(String varName, int scopeId) {
+	public boolean hasSymbol(String varName, int scopeId)
+	{
 		Scope scope = scopes.get(scopeId);
 		return (scope.symbols.containsKey(varName) || (scope.parent != null && hasSymbol(varName, scope.parent.getId())));
 	}
+	
+	public FunctionSymbol getFunction(String FunctionName, int scopeId) throws SymbolNotFoundException
+	{
+		Scope scope = scopes.get(scopeId);
+		return scope.getFunction(FunctionName);
+	}
+	
+	public ProcSymbol getProc(String ProcName, int scopeId) throws SymbolNotFoundException
+	{
+		Scope scope = scopes.get(scopeId);
+		return scope.getProc(ProcName);
+	}
 }
+	
