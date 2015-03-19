@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.telecom.compil.type.ArrayType;
+import fr.telecom.compil.type.BooleanType;
 import fr.telecom.compil.type.IntegerType;
 import fr.telecom.compil.type.VarType;
 
@@ -34,20 +35,22 @@ public class SymbolTable
 	
 	private class Symbol
 	{
-		public Symbol(String name, VarType type, boolean adr)
+		public Symbol(String name, VarType type, boolean adr, int disp)
 		{
 			this.name = name;
 			this.type = type;
 			this.adr = adr;
+			this.disp = disp;
 		}
 		
 		public String name;
 		public VarType type;
 		public boolean adr;
+		public int disp;
 		
 		public String toString()
 		{
-			return name + " " + (adr ? "adr " : "") + type;
+			return name + " " + (adr ? "adr " : "") + type + "(disp : " + disp + ")";
 		}
 	}
 	
@@ -127,14 +130,16 @@ public class SymbolTable
 		public void loadAST(SyntaxicTree AST) throws DuplicateSymbolException
 		{
 			SyntaxicTree declarationTree = AST.getChild("DECLARATIONS");
+			int disp = 0;
 			for(SyntaxicTree tree : declarationTree.getChildren("VAR"))
 			{
 				VarType type = getTypeFromTree(tree.getChild("TYPE").getChild(0));
 				
 				for(SyntaxicTree nameTree : tree.getChild("NAME").getChildren())
 				{
-					Symbol symbol = new Symbol(nameTree.getLabel(), type, false);
+					Symbol symbol = new Symbol(nameTree.getLabel(), type, false, disp);
 					addSymbol(symbol);
+					disp += type.getSize();
 				}
 			}
 			for(SyntaxicTree tree : declarationTree.getChildren("FUNCTION"))
@@ -150,7 +155,7 @@ public class SymbolTable
 				for(int i=0; i<params.length; i++)
 				{
 					SyntaxicTree paramTree = paramsTree.getChild(i);
-					Symbol symbol = new Symbol(paramTree.getChild("NAME").getChild(0).getLabel(), getTypeFromTree(paramTree.getChild("TYPE").getChild(0)), paramTree.getLabel().equals("ADR"));
+					Symbol symbol = new Symbol(paramTree.getChild("NAME").getChild(0).getLabel(), getTypeFromTree(paramTree.getChild("TYPE").getChild(0)), paramTree.getLabel().equals("ADR"), 0);
 					params[i] = symbol;
 					scope.addSymbol(symbol);
 				}
@@ -171,7 +176,7 @@ public class SymbolTable
 				for(int i=0; i<params.length; i++)
 				{
 					SyntaxicTree paramTree = paramsTree.getChild(i);
-					Symbol symbol = new Symbol(paramTree.getChild("NAME").getChild(0).getLabel(), getTypeFromTree(paramTree.getChild("TYPE").getChild(0)), paramTree.getLabel().equals("ADR"));
+					Symbol symbol = new Symbol(paramTree.getChild("NAME").getChild(0).getLabel(), getTypeFromTree(paramTree.getChild("TYPE").getChild(0)), paramTree.getLabel().equals("ADR"), 0);
 					params[i] = symbol;
 					scope.addSymbol(symbol);
 				}
@@ -208,6 +213,8 @@ public class SymbolTable
 				return new IntegerType();
 			else if(tree.getLabel().equals("ARRAY"))
 				return new ArrayType(tree);
+			else if(tree.getLabel().equals("boolean"))
+				return new BooleanType();
 			return null;
 		}
 		

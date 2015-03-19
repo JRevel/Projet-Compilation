@@ -26,7 +26,7 @@ public class SemanticAnalyser
 				checkScope(procTree, table);
 			}
 		} catch (VarNotFoundException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 	}
 	
@@ -39,28 +39,23 @@ public class SemanticAnalyser
 	
 	private static void checkVarDef(SyntaxicTree varTree, int scopeId, SymbolTable table) throws VarNotFoundException
 	{
+		// Les utilisations de variables se font toujours via des des noeuds VAR_REF pour les integer et les boolean,
+		// et ARRAY_ACCESS pour les tableaux
 		if(varTree.getLabel().equals("VAR_REF"))
 		{
+			//on récupère le nom de la variable, c'est le label du seul fils du noeud VAR_REF
 			SyntaxicTree child = varTree.getChild(0);
-			if(child.getLabel().equals("ARRAY_ACCESS"))
-			{
-				String name = child.getChild("NAME").getChild(0).getLabel();
-				if(!table.hasSymbol(name, scopeId))
-					throw new VarNotFoundException(name, scopeId);
-			}
-			else
-			{
-				String name = child.getLabel();
-				if(!table.hasSymbol(name, scopeId))
-					throw new VarNotFoundException(name, scopeId);
-			}
+			String name = child.getLabel();
+			// et on lance une exception si la variable n'est pas dans la table des symboles
+			if(!table.hasSymbol(name, scopeId))
+				throw new VarNotFoundException(child.getLineNumber(), name, scopeId);
 		}
-		else
+		else if(varTree.getLabel().equals("ARRAY_ACCESS"))
 		{
-			for(int i=0; i<varTree.getChildCount(); i++)
-			{
-				checkVarDef(varTree.getChild(i), scopeId, table);
-			}
+			SyntaxicTree nameTree = varTree.getChild("NAME").getChild(0);
+			String name = nameTree.getLabel();
+			if(!table.hasSymbol(name, scopeId))
+				throw new VarNotFoundException(nameTree.getLineNumber(), name, scopeId);
 		}
 	}
 }

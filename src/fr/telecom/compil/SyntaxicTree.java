@@ -58,4 +58,14 @@ public class SyntaxicTree
 	public int getChildCount() {
 		return tree.getChildCount();
 	}
+	
+	public int getLineNumber()
+	{
+		return tree.getLine();
+	}
+	
+	public int getPosInLine()
+	{
+		return tree.getCharPositionInLine();
+	}
 }
