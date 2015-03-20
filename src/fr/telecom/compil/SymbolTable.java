@@ -319,5 +319,12 @@ public class SymbolTable
 		Scope scope = scopes.get(scopeId);
 		return scope.getProc(ProcName);
 	}
+
+	public Symbol getSymbol(String name, int scopeId) throws SymbolNotFoundException {
+
+		Scope scope = scopes.get(scopeId);
+		return scope.getSymbol(name);
+	}
+	
 }
 	

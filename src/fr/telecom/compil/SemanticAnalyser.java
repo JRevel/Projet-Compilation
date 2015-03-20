@@ -1,9 +1,15 @@
 package fr.telecom.compil;
 
+import java.util.ArrayList;
+
+import fr.telecom.compil.SymbolTable.FunctionSymbol;
+import fr.telecom.compil.SymbolTable.Symbol;
 import fr.telecom.compil.SymbolTable.SymbolNotFoundException;
 import fr.telecom.compil.exceptions.BadNumberArgumentsException;
 import fr.telecom.compil.exceptions.SemanticException;
 import fr.telecom.compil.exceptions.VarNotFoundException;
+import fr.telecom.compil.exceptions.WrongTypeArgumentsException;
+import fr.telecom.compil.type.VarType;
 
 public class SemanticAnalyser
 {
@@ -36,9 +42,10 @@ public class SemanticAnalyser
 		}
 	}
 	
-	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException
+	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException
 	{
 		checkVarDef(AST, scopeId, table);
+		checkTypeArguments(AST, scopeId, table);
 		checkNbArgFunc(AST,scopeId,table);
 		checkNbArgProc(AST,scopeId,table);
 		
@@ -90,6 +97,23 @@ public class SemanticAnalyser
 			int tableSize = table.getProc(name, scopeId).args.length;
 			if(ASTSize!=tableSize)
 				throw new BadNumberArgumentsException(varTree.getLineNumber(), name, ASTSize, tableSize);
+		}
+	}
+	private static void checkTypeArguments(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, WrongTypeArgumentsException
+	{
+		if (varTree.getLabel().equals("PROC_CALL"))
+		{
+			String FuncName = varTree.getChild("NAME").getChild().getLabel();
+			ArrayList<SyntaxicTree> children = varTree.getChild("ARGS").getChildren();
+			Symbol[] FuncArgs = table.getFunction(FuncName, scopeId).args;
+			for (int i=0; i<children.size();i++)
+			{
+				String ArgName = children.get(i).getChild().getLabel();
+				VarType TypeArg = table.getSymbol(ArgName, scopeId).type;
+				VarType TypeFunc = FuncArgs[i].type;
+				if (TypeArg !=TypeFunc)
+					throw new WrongTypeArgumentsException(varTree.getLineNumber(), FuncName, ArgName, TypeArg, TypeFunc);
+			}
 		}
 	}
 }
