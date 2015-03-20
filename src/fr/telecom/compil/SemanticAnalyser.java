@@ -8,7 +8,9 @@ import fr.telecom.compil.SymbolTable.SymbolNotFoundException;
 import fr.telecom.compil.exceptions.BadNumberArgumentsException;
 import fr.telecom.compil.exceptions.SemanticException;
 import fr.telecom.compil.exceptions.VarNotFoundException;
+import fr.telecom.compil.exceptions.WrongTypeAffectationException;
 import fr.telecom.compil.exceptions.WrongTypeArgumentsException;
+import fr.telecom.compil.type.IntegerType;
 import fr.telecom.compil.type.VarType;
 
 public class SemanticAnalyser
@@ -19,6 +21,7 @@ public class SemanticAnalyser
 	{
 		currentScope = 0;
 	}
+	
 	public static void checkScope(SyntaxicTree AST, SymbolTable table)
 	{
 		try {
@@ -42,13 +45,14 @@ public class SemanticAnalyser
 		}
 	}
 	
-	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException
+	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException, WrongTypeAffectationException
 	{
 		checkVarDef(AST, scopeId, table);
 		checkNbArgFunc(AST,scopeId,table);
 		checkNbArgProc(AST,scopeId,table);
 		checkTypeArgumentsFunc(AST, scopeId, table);
 		checkTypeArgumentsProc(AST, scopeId, table);
+		checkTypeAffectation(AST, scopeId, table);
 		
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
@@ -104,13 +108,16 @@ public class SemanticAnalyser
 	{
 		if (varTree.getLabel().equals("FUNC_CALL"))
 		{
+			VarType TypeArg;
 			String FuncName = varTree.getChild("NAME").getChild().getLabel();
 			ArrayList<SyntaxicTree> children = varTree.getChild("ARGS").getChildren();
 			Symbol[] FuncArgs = table.getFunction(FuncName, scopeId).args;
 			for (int i=0; i<children.size();i++)
 			{
 				String ArgName = children.get(i).getChild().getLabel();
-				VarType TypeArg = table.getSymbol(ArgName, scopeId).type;
+				if (children.get(i).getLabel().equals("ARRAY_ACCESS"))
+					TypeArg = new IntegerType();
+				else TypeArg = table.getSymbol(ArgName, scopeId).type;
 				VarType TypeFunc = FuncArgs[i].type;
 				if (!TypeArg.getName().equals(TypeFunc.getName()))
 					throw new WrongTypeArgumentsException(varTree.getLineNumber(), FuncName, ArgName, TypeArg, TypeFunc);
@@ -121,17 +128,45 @@ public class SemanticAnalyser
 	{
 		if (varTree.getLabel().equals("PROC_CALL"))
 		{
+			VarType TypeArg;
 			String ProcName = varTree.getChild("NAME").getChild().getLabel();
 			ArrayList<SyntaxicTree> children = varTree.getChild("ARGS").getChildren();
 			Symbol[] ProcArgs = table.getProc(ProcName, scopeId).args;
 			for (int i=0; i<children.size();i++)
 			{
 				String ArgName = children.get(i).getChild().getLabel();
-				VarType TypeArg = table.getSymbol(ArgName, scopeId).type;
+				if (children.get(i).getLabel().equals("ARRAY_ACCESS"))
+					TypeArg = new IntegerType();
+				else TypeArg = table.getSymbol(ArgName, scopeId).type;
 				VarType TypeProc = ProcArgs[i].type;
 				if (!TypeArg.getName().equals(TypeProc.getName()))
 					throw new WrongTypeArgumentsException(varTree.getLineNumber(), ProcName, ArgName, TypeArg, TypeProc);
 			}
+		}
+	}
+	private static void checkTypeAffectation(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, WrongTypeAffectationException
+	{
+		if (varTree.getLabel().equals("="))
+		{
+			VarType TypeLeft;
+			VarType TypeRight;
+			SyntaxicTree ChildLeft= varTree.getChild(0);
+			SyntaxicTree ChildRight = varTree.getChild(1);
+
+			if (ChildLeft.getLabel().equals("VAR_REF"))
+				TypeLeft = table.getSymbol(ChildLeft.getChild().getLabel(), scopeId).type;
+			else if (ChildLeft.getLabel().equals("FUNC_CALL"))
+				TypeLeft = table.getFunction(ChildLeft.getChild("NAME").getChild().getLabel(), scopeId).returnType;
+			else TypeLeft = new IntegerType();
+			
+			if (ChildRight.getLabel().equals("VAR_REF"))
+				TypeRight = table.getSymbol(ChildRight.getChild().getLabel(), scopeId).type;
+			else if (ChildRight.getLabel().equals("FUNC_CALL"))
+				TypeRight = table.getFunction(ChildRight.getChild("NAME").getChild().getLabel(), scopeId).returnType;
+			else TypeRight = new IntegerType();
+			
+			if (!TypeLeft.getName().equals(TypeRight.getName()))
+				throw new WrongTypeAffectationException(varTree.getLineNumber(), TypeRight,TypeLeft);
 		}
 	}
 }
