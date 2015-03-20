@@ -22,7 +22,7 @@ public class BadNumberArgumentsException extends SemanticException
 	@Override
 	public String getErrorMessage()
 	{
-		return "line " + lineNumber + " : bad number of arguments ; "+ ASTSize +" found in "+varName+" which request "+tableSize+" arguments";
+		return "line " + lineNumber + " : bad number of arguments ; "+ ASTSize +" argument(s) found in "+varName+" which request "+tableSize+" argument(s)";
 	}
 	
 }

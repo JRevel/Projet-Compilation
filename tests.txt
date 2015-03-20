@@ -30,7 +30,7 @@
 	tbis = t
 	tbis[3,j] = 25
 	j = i*i/j+j
-	maximum = fMax(t, j)
+	maximum = fMax(i, j)
 	write maximum
 	theEnd()
 end

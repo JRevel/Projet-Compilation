@@ -26,7 +26,7 @@ public class WrongTypeArgumentsException extends SemanticException
 	@Override
 	public String getErrorMessage()
 	{
-		return "line " + lineNumber + " : wrong type of arguments ; in " + FuncName + "the variable " +ArgName+" has for type "+TypeArg+" and it should have for type "+TypeFunc ;
+		return "line " + lineNumber + " : wrong type of arguments ; in " + FuncName + " the variable " +ArgName+" has for type "+TypeArg+" and it should have for type "+TypeFunc ;
 	}
 	
 }

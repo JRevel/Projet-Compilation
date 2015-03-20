@@ -45,9 +45,10 @@ public class SemanticAnalyser
 	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException
 	{
 		checkVarDef(AST, scopeId, table);
-		checkTypeArguments(AST, scopeId, table);
 		checkNbArgFunc(AST,scopeId,table);
 		checkNbArgProc(AST,scopeId,table);
+		checkTypeArgumentsFunc(AST, scopeId, table);
+		checkTypeArgumentsProc(AST, scopeId, table);
 		
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
@@ -99,9 +100,9 @@ public class SemanticAnalyser
 				throw new BadNumberArgumentsException(varTree.getLineNumber(), name, ASTSize, tableSize);
 		}
 	}
-	private static void checkTypeArguments(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, WrongTypeArgumentsException
+	private static void checkTypeArgumentsFunc(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, WrongTypeArgumentsException
 	{
-		if (varTree.getLabel().equals("PROC_CALL"))
+		if (varTree.getLabel().equals("FUNC_CALL"))
 		{
 			String FuncName = varTree.getChild("NAME").getChild().getLabel();
 			ArrayList<SyntaxicTree> children = varTree.getChild("ARGS").getChildren();
@@ -111,8 +112,25 @@ public class SemanticAnalyser
 				String ArgName = children.get(i).getChild().getLabel();
 				VarType TypeArg = table.getSymbol(ArgName, scopeId).type;
 				VarType TypeFunc = FuncArgs[i].type;
-				if (TypeArg !=TypeFunc)
+				if (!TypeArg.getName().equals(TypeFunc.getName()))
 					throw new WrongTypeArgumentsException(varTree.getLineNumber(), FuncName, ArgName, TypeArg, TypeFunc);
+			}
+		}
+	}
+	private static void checkTypeArgumentsProc(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, WrongTypeArgumentsException
+	{
+		if (varTree.getLabel().equals("PROC_CALL"))
+		{
+			String ProcName = varTree.getChild("NAME").getChild().getLabel();
+			ArrayList<SyntaxicTree> children = varTree.getChild("ARGS").getChildren();
+			Symbol[] ProcArgs = table.getProc(ProcName, scopeId).args;
+			for (int i=0; i<children.size();i++)
+			{
+				String ArgName = children.get(i).getChild().getLabel();
+				VarType TypeArg = table.getSymbol(ArgName, scopeId).type;
+				VarType TypeProc = ProcArgs[i].type;
+				if (!TypeArg.getName().equals(TypeProc.getName()))
+					throw new WrongTypeArgumentsException(varTree.getLineNumber(), ProcName, ArgName, TypeArg, TypeProc);
 			}
 		}
 	}
