@@ -40,7 +40,6 @@ public class SemanticAnalyser
 		} catch (SemanticException e) {
 			System.err.println(e.getMessage());
 		} catch (SymbolNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

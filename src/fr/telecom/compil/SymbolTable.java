@@ -54,19 +54,14 @@ public class SymbolTable
 		}
 	}
 	
-	public class FunctionSymbol
+	public class FunctionSymbol extends ProcSymbol
 	{
-		public String name;
 		public VarType returnType;
-		public Symbol[] args;
-		public int scopeId;
 
 		public FunctionSymbol(String name, VarType returnType, Symbol[] args, int scopeId)
 		{
-			this.name = name;
+			super(name, args, scopeId);
 			this.returnType = returnType;
-			this.args = args;
-			this.scopeId = scopeId;
 		}
 		
 		public String toString()
@@ -229,23 +224,23 @@ public class SymbolTable
 			return symbols.get(symbolName);
 		}
 		
-		public FunctionSymbol getFunction(String functionName) throws SymbolNotFoundException
+		public FunctionSymbol getFunction(String functionName)
 		{
 			if(!functionSymbols.containsKey(functionName))
 			{
 				if(parent == null)
-					throw new SymbolNotFoundException(functionName);
+					return null;
 				return parent.getFunction(functionName);
 			}
 			return functionSymbols.get(functionName);
 		}
 		
-		public ProcSymbol getProc(String procName) throws SymbolNotFoundException
+		public ProcSymbol getProc(String procName)
 		{
 			if(!procSymbols.containsKey(procName))
 			{
 				if(parent == null)
-					throw new SymbolNotFoundException(procName);
+					return null;
 				return parent.getProc(procName);
 			}
 			return procSymbols.get(procName);
@@ -308,18 +303,26 @@ public class SymbolTable
 		return (scope.symbols.containsKey(varName) || (scope.parent != null && hasSymbol(varName, scope.parent.getId())));
 	}
 	
-	public FunctionSymbol getFunction(String FunctionName, int scopeId) throws SymbolNotFoundException
+	public FunctionSymbol getFunction(String functionName, int scopeId) throws SymbolNotFoundException
 	{
-		Scope scope = scopes.get(scopeId);
-		return scope.getFunction(FunctionName);
+		FunctionSymbol symbol = scopes.get(scopeId).getFunction(functionName);
+		if(symbol == null)
+			throw new SymbolNotFoundException(functionName);
+		return symbol;
 	}
 	
-	public ProcSymbol getProc(String ProcName, int scopeId) throws SymbolNotFoundException
+	public ProcSymbol getProc(String procName, int scopeId) throws SymbolNotFoundException
 	{
-		Scope scope = scopes.get(scopeId);
-		return scope.getProc(ProcName);
+		ProcSymbol symbol = scopes.get(scopeId).getProc(procName);
+		if(symbol == null)
+		{
+			symbol = scopes.get(scopeId).getFunction(procName);
+			if(symbol == null)
+				throw new SymbolNotFoundException(procName);
+		}
+		return symbol;
 	}
-
+	
 	public Symbol getSymbol(String name, int scopeId) throws SymbolNotFoundException {
 
 		Scope scope = scopes.get(scopeId);

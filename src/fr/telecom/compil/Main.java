@@ -8,6 +8,9 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 
+import fr.telecom.compil.asm.AsmGenerator;
+import fr.telecom.compil.asm.WriteInstruction;
+
 
 public class Main {
 	public static void main(String[] args)
@@ -32,5 +35,7 @@ public class Main {
 		} catch (RecognitionException e) {
 			e.printStackTrace();
 		}
+		AsmGenerator gen = new AsmGenerator();
+		System.out.println(gen.genCode(new WriteInstruction("This is a test")));
 	}
 }

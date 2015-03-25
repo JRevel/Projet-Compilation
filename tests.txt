@@ -3,22 +3,21 @@
 	array [5..13, 25 .. 72] t, tbis
 
 	function integer fMax (adr x: integer, y: integer)
-    		integer result
-    		if x > y
-			then result = x
-        		else result = y
+		integer result
+		if x > y
+		then result = x
+    		else result = y
 		fi
-		t[5] = 20
-    		return (result)
+			t[5] = 20
+		return (result)
 	end
 
-	procedure theEnd( )
+	function integer theEnd()
 		integer bob
 		array[3..12, 10..56] testarray
 		function integer testFunc(x: integer, bob: integer)
 			return (3)
 		end
-
     		write "that's all !!"
 	end
 
@@ -30,7 +29,7 @@
 	tbis = t
 	tbis[3,j] = 25
 	j = i*i/j+j
-	maximum = fMax(i, j)
+	maximum = fMax(t[5], j)
 	write maximum
 	theEnd()
 end
