@@ -1,0 +1,9 @@
+Vérifications sémantiques :
+ - les variables utilisées dans les instructions doivent être dans la table des symboles
+ - les fonctions doivent être appelées avec le bon nombre d'arguments
+ - les arguments des fonctions doivent être du bon type
+ - les bounds des tableaux doivent être rangés par ordre croissant
+ - les expressions à gauche et à droite des affectations doivent être du même type (boolean ou integer ou array)
+ - les opérateurs arithmétiques se font tous sur des variables de type integer
+ - les expressions dans les if sont toutes du type boolean
+ - les appels de cases de tableau se font avec la bonne dimension

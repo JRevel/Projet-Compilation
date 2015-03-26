@@ -1,0 +1,21 @@
+		ORG	0xFF10
+		START	0xFF60
+LOAD_ARDS	EQU	0xFF60
+CHAR_ARDS	EQU	LOAD_ARDS
+IDX_ARDS	EQU	0xFF10
+STRING_ARDS	EQU	0xFF12
+SP		EQU	R15
+STACKA		EQU	0xFF00
+STRING_MAX	EQU	80
+NO_FOUND	EQU	-1
+
+
+FIND	LDW	R0, (SP)+	//dépile l'adresse de retour
+	LDW	R1, (SP)+	//dépile la position de la chaine
+	LDW	R2, (SP)+	//dépile le caractère à chercher
+LOOP	LDW	R3, (R1)	//R3 <- M[R1]
+	SUB	R3, R2, R3	//R3-R2<-R3
+	
+	
+	STW	R0, -(SP)	//empile l'adresse de retour
+	RTS			//fin FIND
