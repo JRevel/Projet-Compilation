@@ -12,7 +12,6 @@ public class WriteInstruction implements Instruction
 		this.text = text;
 	}
 
-	@Override
 	public ArrayList<String> genCode() {
 		ArrayList<String> result = new ArrayList<String>();
 		result.add("STR" + id + "	STRING	" + "\"" + text + "\"");

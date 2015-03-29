@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import fr.telecom.compil.SymbolTable.FunctionSymbol;
 import fr.telecom.compil.SymbolTable.Symbol;
 import fr.telecom.compil.SymbolTable.SymbolNotFoundException;
+import fr.telecom.compil.SyntaxicTree;
+import fr.telecom.compil.exceptions.BadArrayBoundsDeclaration;
 import fr.telecom.compil.exceptions.BadNumberArgumentsException;
 import fr.telecom.compil.exceptions.BooleanIfConditionException;
 import fr.telecom.compil.exceptions.NotIntegerInOperationException;
@@ -28,7 +30,9 @@ public class SemanticAnalyser
 	public static void checkScope(SyntaxicTree AST, SymbolTable table)
 	{
 		try {
+			checkDeclarations(AST.getChild("DECLARATIONS"), currentScope, table);
 			checkInstructions(AST.getChild("INSTRUCTIONS"), currentScope, table);
+			
 			SyntaxicTree declTree = AST.getChild("DECLARATIONS");
 			for(SyntaxicTree functionTree : declTree.getChildren("FUNCTION"))
 			{
@@ -59,6 +63,18 @@ public class SemanticAnalyser
 
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
+	}
+	
+	//Ajout par Didier pour check certains problèmes dans les déclarations
+	
+	
+	private static void checkDeclarations(SyntaxicTree AST, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadArrayBoundsDeclaration
+	{
+		checkArrayBounds(AST, scopeId, table);
+
+
+		for(int i=0; i<AST.getChildCount(); i++)
+			checkDeclarations(AST.getChild(i), scopeId, table);
 	}
 
 	private static void checkVarDef(SyntaxicTree varTree, int scopeId, SymbolTable table) throws VarNotFoundException
@@ -205,7 +221,7 @@ public class SemanticAnalyser
 
 
 	// Ajout de Guillaume BRUNEAU, à vérifier
-	private static void checkTypeIfCondition(SyntaxicTree varTree, int scopeId, SymbolTable table) throws BooleanIfConditionException, SymbolNotFoundException, WrongTypeLowerGreaterException
+	private static void checkTypeIfCondition(SyntaxicTree varTree, int scopeId, SymbolTable table) throws BooleanIfConditionException, SymbolNotFoundException//, WrongTypeLowerGreaterException
 	{
 		if (varTree.getLabel().equals("CONDITION"))
 		{
@@ -268,6 +284,30 @@ public class SemanticAnalyser
 				throw new WrongTypeAffectationException(varTree.getLineNumber(), typeLeft, typeRight);
 
 		}	
+	}
+	
+	//Ajouter par Didier
+	private static void checkArrayBounds(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadArrayBoundsDeclaration
+	{
+		if (varTree.getLabel().equals("ARRAY"))
+		{
+			int nombreChild = varTree.getChildCount();
+			for (int i = 0;i<nombreChild;i++)
+			{
+				//Label Range
+				SyntaxicTree childRange = varTree.getChild(i);
+				SyntaxicTree childLeft= childRange.getChild(0);
+				SyntaxicTree childRight = childRange.getChild(1);
+				
+				int boundsmin = Integer.valueOf(childLeft.getLabel());
+				int boundsmax = Integer.valueOf(childRight.getLabel());
+				
+				if(boundsmin > boundsmax)
+				{
+					throw new BadArrayBoundsDeclaration(varTree.getLineNumber());
+				}
+			}
+		}
 	}
 
 }

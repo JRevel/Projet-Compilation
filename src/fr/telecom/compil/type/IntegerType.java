@@ -2,7 +2,6 @@ package fr.telecom.compil.type;
 
 public class IntegerType implements VarType {
 
-	@Override
 	public String getName() {
 		return "integer";
 	}
@@ -13,7 +12,6 @@ public class IntegerType implements VarType {
 		return getName();
 	}
 
-	@Override
 	public int getSize() {
 		return 4;
 	}

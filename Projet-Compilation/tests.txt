@@ -1,7 +1,7 @@
  do
 	integer i, j, maximum
 	array [5..13, 25 .. 72] t, tbis
-
+	array [0..10, 10..0] tabfaux2
 	function integer fMax (adr x: integer, y: integer)
     		integer result
     		if x > y
