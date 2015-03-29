@@ -2,3 +2,6 @@
 bin/*
 *.[oa]
 /bin/
+*.classpath
+*.class
+.settings/org.eclipse.jdt.core.prefs
