@@ -1,5 +1,5 @@
  do
-	integer i, j, maximum
+	integer i, j, maximum,a
 	array [5..13, 25 .. 72] t, tbis
 	array [0..10, 10..0] tabfaux2
 	function integer fMax (adr x: integer, y: integer)
@@ -29,6 +29,7 @@
 	j = t[1]
 	tbis = t
 	tbis[3,j] = 25
+	a = tbis[1,j]
 	j = i*i/j+j
 	maximum = fMax(i, j)
 	write maximum

@@ -7,6 +7,7 @@ import fr.telecom.compil.SymbolTable.Symbol;
 import fr.telecom.compil.SymbolTable.SymbolNotFoundException;
 import fr.telecom.compil.SyntaxicTree;
 import fr.telecom.compil.exceptions.BadArrayBoundsDeclaration;
+import fr.telecom.compil.exceptions.BadIndexArrayAccessStatique;
 import fr.telecom.compil.exceptions.BadNumberArgumentsException;
 import fr.telecom.compil.exceptions.BooleanIfConditionException;
 import fr.telecom.compil.exceptions.NotIntegerInOperationException;
@@ -15,6 +16,7 @@ import fr.telecom.compil.exceptions.VarNotFoundException;
 import fr.telecom.compil.exceptions.WrongTypeAffectationException;
 import fr.telecom.compil.exceptions.WrongTypeArgumentsException;
 import fr.telecom.compil.exceptions.WrongTypeLowerGreaterException;
+import fr.telecom.compil.type.ArrayType;
 import fr.telecom.compil.type.IntegerType;
 import fr.telecom.compil.type.VarType;
 
@@ -52,7 +54,7 @@ public class SemanticAnalyser
 		}
 	}
 
-	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException, WrongTypeAffectationException
+	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException, WrongTypeAffectationException, BadIndexArrayAccessStatique
 	{
 		checkVarDef(AST, scopeId, table);
 		checkNbArgFunc(AST,scopeId,table);
@@ -60,6 +62,7 @@ public class SemanticAnalyser
 		checkTypeArgumentsFunc(AST, scopeId, table);
 		checkTypeArgumentsProc(AST, scopeId, table);
 		checkTypeAffectation(AST, scopeId, table);
+		checkIndexArrayAccessStatique(AST, scopeId, table);
 
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
@@ -286,7 +289,7 @@ public class SemanticAnalyser
 		}	
 	}
 	
-	//Ajouter par Didier
+	//Ajout par Didier
 	private static void checkArrayBounds(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadArrayBoundsDeclaration
 	{
 		if (varTree.getLabel().equals("ARRAY"))
@@ -308,6 +311,63 @@ public class SemanticAnalyser
 				}
 			}
 		}
+	}	
+		//Ajout par Didier
+	private static void checkIndexArrayAccessStatique(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadIndexArrayAccessStatique
+	{
+		if (varTree.getLabel().equals("ARRAY_ACCESS"))
+		{
+			SyntaxicTree childName = varTree.getChild(0);
+			ArrayType tableauType = (ArrayType) table.getSymbol(childName.getChild(0).getLabel(), scopeId).type;
+			ArrayList<int[]> bornes =tableauType.getBounds();
+			
+			//Valeur rangée dans un tableau
+			if (varTree.getChild(1).getLabel().equals("CELLS"))
+			{
+				
+				//Label Cells
+				SyntaxicTree childCells = varTree.getChild(1);
+				int dim = 0;
+				for (SyntaxicTree child : varTree.getChildren())
+				{
+					if (child.getLabel().equals("VAR_REF")!=true)
+					{
+						int valIndexStat = Integer.valueOf(child.getLabel());
+						if(bornes.get(dim)[0]<= valIndexStat || bornes.get(dim)[1] >= valIndexStat)
+						{
+							throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
+						}
+					}
+				}
+				
+			}
+			else 			
+			{
+				//Valeur cherchée dans un tableau
+				if (varTree.getChild(1).getLabel().equals("RANGE"))
+				{
+					//Label Range
+					SyntaxicTree childRange = varTree.getChild(1);
+					int dim = 0;
+					for (SyntaxicTree child : varTree.getChildren())
+					{
+						if (child.getLabel().equals("VAR_REF")!=true)
+						{
+							int valIndexStat = Integer.valueOf(child.getLabel());
+							if(bornes.get(dim)[0]<= valIndexStat || bornes.get(dim)[1] >= valIndexStat)
+							{
+								throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
+							}
+						}
+					}
+					
+	
+					
+				}
+			}
+		}
 	}
-
 }
+	
+
+

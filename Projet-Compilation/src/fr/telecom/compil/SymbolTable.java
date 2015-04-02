@@ -52,6 +52,7 @@ public class SymbolTable
 		{
 			return name + " " + (adr ? "adr " : "") + type + "(disp : " + disp + ")";
 		}
+		
 	}
 	
 	public class FunctionSymbol

@@ -49,4 +49,10 @@ public class ArrayType implements VarType
 		return size*4;
 	}
 	
+	public ArrayList<int[]> getBounds()
+	{
+		return bounds;
+		
+	}
+	
 }
