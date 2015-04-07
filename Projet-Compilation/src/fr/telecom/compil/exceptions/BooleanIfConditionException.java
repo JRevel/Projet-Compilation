@@ -1,16 +1,23 @@
 package fr.telecom.compil.exceptions;
 
+import fr.telecom.compil.type.VarType;
+
 public class BooleanIfConditionException extends SemanticException 
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int lineNumber;
-	private boolean resLeft;
+	private VarType typeLeft, typeRight;
 	private String label;
 	
-	public BooleanIfConditionException(int lineNumber, boolean resLeft, String label) 
+	public BooleanIfConditionException(int lineNumber, VarType typeLeft, VarType typeRight, String label) 
 	{
 		this.lineNumber=lineNumber;
-		this.resLeft=resLeft;
+		this.typeLeft=typeLeft;
+		this.typeRight=typeRight;
 		this.label=label;
 	}
 
@@ -19,12 +26,10 @@ public class BooleanIfConditionException extends SemanticException
 	{
 		if (label.equals("VAR_REF"))
 			return "line " + lineNumber + " : wrong type ; Boolean is requested";
-		else if (!resLeft)
-			return "line " + lineNumber + " : wrong type at the left of "+label+" which request an boolean";
-		else
-			return "line " + lineNumber + " : wrong type at the right of "+label+" which request an boolean";
-	}	
+		else 
+			return "line " + lineNumber + " : wrong type of arguments in this "+label+" ; The first one has for type "+typeLeft+" when the second has for type "+typeRight;
+		}	
 
 }
 
-//Ajout de Guillaume BRUNEAU, à vérifier
+//Ajout de Guillaume BRUNEAU

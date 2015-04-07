@@ -11,12 +11,13 @@ import fr.telecom.compil.exceptions.BadIndexArrayAccessStatique;
 import fr.telecom.compil.exceptions.BadNumberArgumentsException;
 import fr.telecom.compil.exceptions.BooleanIfConditionException;
 import fr.telecom.compil.exceptions.NotIntegerInOperationException;
+import fr.telecom.compil.exceptions.RangeIntException;
 import fr.telecom.compil.exceptions.SemanticException;
 import fr.telecom.compil.exceptions.VarNotFoundException;
 import fr.telecom.compil.exceptions.WrongTypeAffectationException;
 import fr.telecom.compil.exceptions.WrongTypeArgumentsException;
-import fr.telecom.compil.exceptions.WrongTypeLowerGreaterException;
 import fr.telecom.compil.type.ArrayType;
+import fr.telecom.compil.type.BooleanType;
 import fr.telecom.compil.type.IntegerType;
 import fr.telecom.compil.type.VarType;
 
@@ -34,7 +35,7 @@ public class SemanticAnalyser
 		try {
 			checkDeclarations(AST.getChild("DECLARATIONS"), currentScope, table);
 			checkInstructions(AST.getChild("INSTRUCTIONS"), currentScope, table);
-			
+
 			SyntaxicTree declTree = AST.getChild("DECLARATIONS");
 			for(SyntaxicTree functionTree : declTree.getChildren("FUNCTION"))
 			{
@@ -54,7 +55,7 @@ public class SemanticAnalyser
 		}
 	}
 
-	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException, WrongTypeAffectationException, BadIndexArrayAccessStatique
+	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException, WrongTypeAffectationException, BadIndexArrayAccessStatique, NotIntegerInOperationException, BooleanIfConditionException, RangeIntException
 	{
 		checkVarDef(AST, scopeId, table);
 		checkNbArgFunc(AST,scopeId,table);
@@ -62,15 +63,19 @@ public class SemanticAnalyser
 		checkTypeArgumentsFunc(AST, scopeId, table);
 		checkTypeArgumentsProc(AST, scopeId, table);
 		checkTypeAffectation(AST, scopeId, table);
-		checkIndexArrayAccessStatique(AST, scopeId, table);
+		//checkIndexArrayAccessStatique(AST, scopeId, table);
+		checkTypeArithmeticOperation(AST, scopeId, table);
+		checkTypeIfCondition(AST, scopeId, table);
+		checkTypeLowerGreaterOperation(AST, scopeId, table);
+		checkForRange(AST, scopeId, table);
 
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
 	}
-	
+
 	//Ajout par Didier pour check certains problèmes dans les déclarations
-	
-	
+
+
 	private static void checkDeclarations(SyntaxicTree AST, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadArrayBoundsDeclaration
 	{
 		checkArrayBounds(AST, scopeId, table);
@@ -192,7 +197,7 @@ public class SemanticAnalyser
 		}
 	}
 
-	// Ajout de Guillaume BRUNEAU, à vérifier
+	// Ajout de Guillaume BRUNEAU 
 	private static boolean checkTypeArithmeticOperation(SyntaxicTree varTree, int scopeId, SymbolTable table) throws NotIntegerInOperationException, SymbolNotFoundException
 	{
 		if (varTree.getLabel().equals("+") || varTree.getLabel().equals("-") || varTree.getLabel().equals("*") || varTree.getLabel().equals("/"))
@@ -201,16 +206,16 @@ public class SemanticAnalyser
 			SyntaxicTree childLeft= varTree.getChild(0);
 			SyntaxicTree childRight = varTree.getChild(1);
 
-			if (childLeft.getLabel().equals("VAR_REF"))
-				resLeft = table.getSymbol(childLeft.getChild().getLabel(), scopeId).type.getName().equals("integer");
+			if (childLeft.getLabel().equals("VAR_REF")) 
+				resLeft = table.getSymbol(childLeft.getChild().getLabel(), scopeId).type.getName().equals(new IntegerType().getName());
 			else if (childLeft.getLabel().equals("+") || childLeft.getLabel().equals("-") || childLeft.getLabel().equals("*") || childLeft.getLabel().equals("/"))
-				resLeft = checkTypeArithmeticOperation(childLeft, scopeId, table);
+				resLeft = true;
 			else resLeft=false;
 
 			if (childRight.getLabel().equals("VAR_REF"))
 				resRight = table.getSymbol(childRight.getChild().getLabel(), scopeId).type.getName().equals("integer");
 			else if (childRight.getLabel().equals("+") || childRight.getLabel().equals("-") || childRight.getLabel().equals("*") || childRight.getLabel().equals("/"))
-				resRight = checkTypeArithmeticOperation(childRight, scopeId, table);
+				resRight = true;
 			else resRight=false;
 
 			if (!resLeft || !resRight )
@@ -223,7 +228,7 @@ public class SemanticAnalyser
 	}
 
 
-	// Ajout de Guillaume BRUNEAU, à vérifier
+	// Ajout de Guillaume BRUNEAU 
 	private static void checkTypeIfCondition(SyntaxicTree varTree, int scopeId, SymbolTable table) throws BooleanIfConditionException, SymbolNotFoundException//, WrongTypeLowerGreaterException
 	{
 		if (varTree.getLabel().equals("CONDITION"))
@@ -234,61 +239,78 @@ public class SemanticAnalyser
 			if (label.equals("VAR_REF"))
 			{
 				VarType childType = table.getSymbol(child.getChild().getLabel(), scopeId).type;
-				if (!childType.equals("boolean") )
-					throw new BooleanIfConditionException(varTree.getLineNumber(), false, label);
+				if (!childType.getName().equals(new BooleanType().getName()) )
+					throw new BooleanIfConditionException(varTree.getLineNumber(), new IntegerType(), new IntegerType(), label);
 			}
 
 			else if (label.equals(">") || label.equals("<"))
-			{
-				boolean resLeft=true, resRight=true;
-				SyntaxicTree childLeft= child.getChild(0);
-				SyntaxicTree childRight = child.getChild(1);
+				checkTypeLowerGreaterOperation(child, scopeId, table);
 
-				if (childLeft.getLabel().equals("VAR_REF"))
-					resLeft = table.getSymbol(childLeft.getChild().getLabel(), scopeId).type.getName().equals("boolean");
-				else if (childLeft.getLabel().equals(">") || childLeft.getLabel().equals("<"))
-					resLeft = true;
-				else resLeft=false;
-
-				if (childRight.getLabel().equals("VAR_REF"))
-					resRight = table.getSymbol(childRight.getChild().getLabel(), scopeId).type.getName().equals("boolean");
-				else if (childRight.getLabel().equals(">") || childRight.getLabel().equals("<"))
-					resRight = true;
-				else resRight=false;
-
-				if (!resLeft || !resRight )
-					throw new BooleanIfConditionException(varTree.getLineNumber(), resLeft, varTree.getLabel());
-			}
 		}
 	}
 
-	//Ajout de Guillaume BRUNEAU, à vérifier
-	private static void checkTypeLowerGreaterOperation(SyntaxicTree varTree, int scopeId, SymbolTable table) throws WrongTypeAffectationException, SymbolNotFoundException, NotIntegerInOperationException 
+	//Ajout de Guillaume BRUNEAU
+	private static void checkTypeLowerGreaterOperation(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BooleanIfConditionException
 	{
 		if (varTree.getLabel().equals(">") || varTree.getLabel().equals("<"))
 		{
-			VarType typeLeft, typeRight;
+			VarType typeLeft;
+			VarType typeRight;
 			SyntaxicTree childLeft= varTree.getChild(0);
 			SyntaxicTree childRight = varTree.getChild(1);
 
 			if (childLeft.getLabel().equals("VAR_REF"))
 				typeLeft = table.getSymbol(childLeft.getChild().getLabel(), scopeId).type;
-			else if (childLeft.getLabel().equals("+") || childLeft.getLabel().equals("-") || childLeft.getLabel().equals("*") || childLeft.getLabel().equals("/"))
-				typeLeft = (new IntegerType());
-			else typeLeft=null;
+			else if (childLeft.getLabel().equals(">") || childLeft.getLabel().equals("<"))
+				typeLeft=new BooleanType();
+			else typeLeft=new IntegerType();
+
+			if (childRight.getLabel().equals("VAR_REF"))
+				typeRight = table.getSymbol(childRight.getChild().getLabel(), scopeId).type;
+			else if (childRight.getLabel().equals(">") || childRight.getLabel().equals("<"))
+				typeRight = new BooleanType();
+			else typeRight = new IntegerType();
+
+			if (!typeLeft.getName().equals(typeRight.getName()) )
+				throw new BooleanIfConditionException(varTree.getLineNumber(), typeLeft, typeRight, varTree.getLabel());
+		}
+	}
+
+	//Ajout par guillaume
+	private static void checkForRange(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, NotIntegerInOperationException, RangeIntException
+	{
+		if (varTree.getLabel().equals("FOR"))
+		{ 
+			SyntaxicTree child= varTree.getChild(1);
+			SyntaxicTree childLeft= child.getChild(0);
+			SyntaxicTree childRight = child.getChild(1);
+			VarType typeLeft=new IntegerType();
+			VarType typeRight=new IntegerType();
+			int rangeMin;
+			int rangeMax;
 
 			if (childLeft.getLabel().equals("VAR_REF"))
+				typeLeft = table.getSymbol(childLeft.getChild().getLabel(), scopeId).type;
+			else 
+				rangeMin = Integer.valueOf(childLeft.getLabel());
+
+			if (childRight.getLabel().equals("VAR_REF"))
 				typeRight = table.getSymbol(childRight.getChild().getLabel(), scopeId).type;
-			else if (childRight.getLabel().equals("+") || childRight.getLabel().equals("-") || childRight.getLabel().equals("*") || childRight.getLabel().equals("/"))
-				typeRight = (new IntegerType());
-			else typeRight=null;
+			else
+				rangeMax = Integer.valueOf(childRight.getLabel());
 
-			if (!typeLeft.equals(typeRight) || typeLeft.equals(null))
-				throw new WrongTypeAffectationException(varTree.getLineNumber(), typeLeft, typeRight);
-
-		}	
+			if (!typeLeft.getName().equals("integer") || !typeRight.getName().equals("integer"))
+				throw new NotIntegerInOperationException(varTree.getLineNumber(), typeLeft.getName().equals("integer"), "range declaration");
+			else
+			{	
+				rangeMin = Integer.valueOf(childLeft.getLabel());
+				rangeMax = Integer.valueOf(childRight.getLabel());
+				if(rangeMin > rangeMax)
+					throw new RangeIntException();
+			}
+		}
 	}
-	
+
 	//Ajout par Didier
 	private static void checkArrayBounds(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadArrayBoundsDeclaration
 	{
@@ -301,10 +323,10 @@ public class SemanticAnalyser
 				SyntaxicTree childRange = varTree.getChild(i);
 				SyntaxicTree childLeft= childRange.getChild(0);
 				SyntaxicTree childRight = childRange.getChild(1);
-				
+
 				int boundsmin = Integer.valueOf(childLeft.getLabel());
 				int boundsmax = Integer.valueOf(childRight.getLabel());
-				
+
 				if(boundsmin > boundsmax)
 				{
 					throw new BadArrayBoundsDeclaration(varTree.getLineNumber());
@@ -312,7 +334,7 @@ public class SemanticAnalyser
 			}
 		}
 	}	
-		//Ajout par Didier
+	//Ajout par Didier
 	private static void checkIndexArrayAccessStatique(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadIndexArrayAccessStatique
 	{
 		if (varTree.getLabel().equals("ARRAY_ACCESS"))
@@ -320,11 +342,11 @@ public class SemanticAnalyser
 			SyntaxicTree childName = varTree.getChild(0);
 			ArrayType tableauType = (ArrayType) table.getSymbol(childName.getChild(0).getLabel(), scopeId).type;
 			ArrayList<int[]> bornes =tableauType.getBounds();
-			
+
 			//Valeur rangée dans un tableau
 			if (varTree.getChild(1).getLabel().equals("CELLS"))
 			{
-				
+
 				//Label Cells
 				SyntaxicTree childCells = varTree.getChild(1);
 				int dim = 0;
@@ -339,7 +361,7 @@ public class SemanticAnalyser
 						}
 					}
 				}
-				
+
 			}
 			else 			
 			{
@@ -360,14 +382,14 @@ public class SemanticAnalyser
 							}
 						}
 					}
-					
-	
-					
+
+
+
 				}
 			}
 		}
 	}
 }
-	
+
 
 

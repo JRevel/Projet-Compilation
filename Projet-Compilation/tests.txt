@@ -1,15 +1,17 @@
  do
 	integer i, j, maximum,a
 	array [5..13, 25 .. 72] t, tbis
-	array [0..10, 10..0] tabfaux2
+	array [0..10, 10..20] tabfaux2
+	
 	function integer fMax (adr x: integer, y: integer)
-    		integer result
-    		if x > y
-			then result = x
-        		else result = y
+		boolean b
+    	integer result
+    	if b
+			then result = x 
+        	else result = y
 		fi
 		t[5] = 20
-    		return (result)
+    	return (result)
 	end
 
 	procedure theEnd( )

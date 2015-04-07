@@ -3,6 +3,10 @@ package fr.telecom.compil.exceptions;
 public class NotIntegerInOperationException extends SemanticException 
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int lineNumber;
 	private boolean resLeft;
 	private String label;
@@ -25,4 +29,4 @@ public class NotIntegerInOperationException extends SemanticException
 
 }
 
-// Ajout de Guillaume BRUNEAU, à vérifier
+// Ajout de Guillaume BRUNEAU
