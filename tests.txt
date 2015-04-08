@@ -26,9 +26,9 @@
 		t[i] = false
 	end
 
-	j = t[1]
+	j = t[6, 30]
 	tbis = t
-	tbis[3,j] = 25
+	tbis[5,40] = 25
 	j = i*i/j+j
 	maximum = fMax(t[5], j)
 	write maximum

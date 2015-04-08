@@ -260,11 +260,14 @@ public class SemanticAnalyser
 					if (child.getLabel().equals("VAR_REF")!=true)
 					{
 						int valIndexStat = Integer.valueOf(child.getLabel());
-						if(bornes.get(dim)[0]<= valIndexStat || bornes.get(dim)[1] >= valIndexStat)
+						int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
+						if(valIndexStat < min || valIndexStat >= max)
 						{
+							System.out.println(min +" " + valIndexStat + " " + max );
 							throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
 						}
 					}
+					dim++;
 				}
 
 			}
@@ -281,11 +284,13 @@ public class SemanticAnalyser
 						if (child.getLabel().equals("VAR_REF")!=true)
 						{
 							int valIndexStat = Integer.valueOf(child.getLabel());
-							if(bornes.get(dim)[0]<= valIndexStat || bornes.get(dim)[1] >= valIndexStat)
+							int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
+							if(valIndexStat < min || valIndexStat >= max)
 							{
 								throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
 							}
 						}
+						dim++;
 					}
 
 
