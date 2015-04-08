@@ -50,23 +50,12 @@ public class Main {
 			e1.printStackTrace();
 		}
 		try {
-			Process proc = Runtime.getRuntime().exec("java -jar microPIUP/microPIUP.jar -ass output.src");
+			Process proc = Runtime.getRuntime().exec("java -jar MicroPIUP/microPIUP.jar -ass output.src");
 			BufferedReader in = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 			String line;
 			while((line = in.readLine()) != null)
 			{
 				System.err.println(line);
-			}
-			proc = Runtime.getRuntime().exec("java -jar microPIUP/microPIUP.jar -batch output.iup");
-			in = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-			while((line = in.readLine()) != null)
-			{
-				System.err.println(line);
-			}
-			in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-			while((line = in.readLine()) != null)
-			{
-				System.out.println(line);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
