@@ -1,6 +1,7 @@
  do
 	integer i, j, maximum
-	array [5..13, 25 .. 72] t, tbis
+	array [5..13, 25 .. 72] tbis
+	array[5..13] t
 
 	function integer fMax (adr x: integer, y: integer)
 		integer result
@@ -26,7 +27,7 @@
 		t[i] = false
 	end
 
-	j = t[6, 30]
+	j = t[6]
 	tbis = t
 	tbis[5,40] = 25
 	j = i*i/j+j
