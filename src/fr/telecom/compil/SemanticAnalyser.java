@@ -2,10 +2,13 @@ package fr.telecom.compil;
 
 import java.util.ArrayList;
 
+import org.antlr.gunit.ReturnTest;
+
 import fr.telecom.compil.SymbolTable.FunctionSymbol;
 import fr.telecom.compil.SymbolTable.Symbol;
 import fr.telecom.compil.SymbolTable.SymbolNotFoundException;
 import fr.telecom.compil.exceptions.BadNumberArgumentsException;
+import fr.telecom.compil.exceptions.NoReturnException;
 import fr.telecom.compil.exceptions.SemanticException;
 import fr.telecom.compil.exceptions.VarNotFoundException;
 import fr.telecom.compil.exceptions.WrongTypeAffectationException;
@@ -31,6 +34,7 @@ public class SemanticAnalyser
 			{
 				currentScope++;
 				checkScope(functionTree, table);
+				checkReturn(functionTree, currentScope, table);
 			}
 			for(SyntaxicTree procTree : declTree.getChildren("PROC"))
 			{
@@ -166,6 +170,29 @@ public class SemanticAnalyser
 			
 			if (!TypeLeft.getName().equals(TypeRight.getName()))
 				throw new WrongTypeAffectationException(varTree.getLineNumber(), TypeRight,TypeLeft);
+		}
+	}
+	
+	private static void checkReturn(SyntaxicTree varTree, int scopeId, SymbolTable table) throws NoReturnException, SymbolNotFoundException
+	{
+		String functionName = varTree.getChild("PROTOTYPE").getChild("NAME").getChild(0).getLabel();
+		checkReturn(varTree.getChild("INSTRUCTIONS"), functionName);
+	}
+	
+	private static void checkReturn(SyntaxicTree varTree, String functionName) throws NoReturnException
+	{
+		SyntaxicTree lastChild = varTree.getChild(varTree.getChildCount()-1);
+		String label = lastChild.getLabel();
+		if(label.equals("IF"))
+		{
+			checkReturn(lastChild.getChild("THEN"), functionName);
+			SyntaxicTree elseChild = lastChild.getChild("ELSE");
+			if(elseChild != null)
+				checkReturn(elseChild, functionName);
+		}
+		else if(!label.equals("RETURN"))
+		{
+			throw new NoReturnException(functionName, 0);
 		}
 	}
 }

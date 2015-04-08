@@ -13,4 +13,13 @@ public class AsmGenerator {
 			result += s + "\n";
 		return result;
 	}
+
+	public String genInitCode(int i, int j) {
+		return "	ORG 0x" + Integer.toHexString(i) + "\n" + "	START 0x" + Integer.toHexString(j) + "\n";
+	}
+	
+	public String genEndCode()
+	{
+		return "\n	TRP #64\n";
+	}
 }

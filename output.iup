@@ -1,0 +1,16 @@
+ff10  origine
+ff60  debut d'execution
+5468   emplacement : 65296  (0xff10)  ligne n° 3	STR0	STRING	"This is a test"
+6973   emplacement : 65298  (0xff12) 
+2069   emplacement : 65300  (0xff14) 
+7320   emplacement : 65302  (0xff16) 
+6120   emplacement : 65304  (0xff18) 
+7465   emplacement : 65306  (0xff1a) 
+7374   emplacement : 65308  (0xff1c) 
+0000   emplacement : 65310  (0xff1e) 
+6080   emplacement : 65312  (0xff20)  ligne n° 4		LDW	R0, #STR0
+ff10   emplacement : 65314  (0xff22) 
+0b00   emplacement : 65316  (0xff24)  ligne n° 5		TRP	#66
+0042   emplacement : 65318  (0xff26) 
+0b00   emplacement : 65320  (0xff28)  ligne n° 7		TRP #64
+0040   emplacement : 65322  (0xff2a) 

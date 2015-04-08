@@ -1,0 +1,7 @@
+	ORG 0xff10
+	START 0xff60
+STR0	STRING	"This is a test"
+	LDW	R0, #STR0
+	TRP	#66
+
+	TRP #64

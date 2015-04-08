@@ -1,7 +1,10 @@
 package fr.telecom.compil;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -30,12 +33,45 @@ public class Main {
 			SymbolTable symbols = new SymbolTable(AST);
 			SemanticAnalyser.checkScope(AST, symbols);
 			System.out.println(symbols);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (RecognitionException e) {
 			e.printStackTrace();
 		}
 		AsmGenerator gen = new AsmGenerator();
-		System.out.println(gen.genCode(new WriteInstruction("This is a test")));
+		try {
+			FileOutputStream fileOut = new FileOutputStream("output.src");
+			String code = "";
+			code += gen.genInitCode(0xFF10, 0xFF60);
+			code += gen.genCode(new WriteInstruction("This is a test"));
+			code += gen.genEndCode();
+			fileOut.write(code.getBytes());
+			fileOut.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			Process proc = Runtime.getRuntime().exec("java -jar microPIUP/microPIUP.jar -ass output.src");
+			BufferedReader in = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+			String line;
+			while((line = in.readLine()) != null)
+			{
+				System.err.println(line);
+			}
+			proc = Runtime.getRuntime().exec("java -jar microPIUP/microPIUP.jar -batch output.iup");
+			in = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+			while((line = in.readLine()) != null)
+			{
+				System.err.println(line);
+			}
+			in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			while((line = in.readLine()) != null)
+			{
+				System.out.println(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

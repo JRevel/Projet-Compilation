@@ -19,6 +19,7 @@
 			return (3)
 		end
     		write "that's all !!"
+    		return (50436)
 	end
 
 	for i in 0..5 do
