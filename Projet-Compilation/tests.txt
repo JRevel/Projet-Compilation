@@ -4,7 +4,7 @@
 	array [0..10, 10..20] tabfaux2
 	
 	function integer fMax (adr x: integer, y: integer)
-		boolean b
+		integer b
     	integer result
     	if b
 			then result = x 

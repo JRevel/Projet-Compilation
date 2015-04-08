@@ -70,7 +70,7 @@ public class SemanticAnalyser
 		checkTypeIfCondition(AST, scopeId, table);
 		checkTypeLowerGreaterOperation(AST, scopeId, table);
 		//checkForRange(AST, scopeId, table);
-		checkTypeReturnFunction(AST, scopeId, table);
+		
 
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
@@ -83,6 +83,7 @@ public class SemanticAnalyser
 	{
 		checkArrayBoundsCroiss(AST, scopeId, table);
 		checkTypeReturnFunction(AST, scopeId, table);
+		
 
 
 		for(int i=0; i<AST.getChildCount(); i++)
@@ -402,6 +403,7 @@ public class SemanticAnalyser
 			SyntaxicTree childProto = varTree.getChild("PROTOTYPE");
 			SyntaxicTree childInstru = varTree.getChild("INSTRUCTIONS");
 			String retour;
+			scopeId++;
 			
 			if(childInstru.getChild("RETURN").getChild().getLabel().equals("VAR_REF"))
 			{
