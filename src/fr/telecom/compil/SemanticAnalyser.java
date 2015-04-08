@@ -2,9 +2,6 @@ package fr.telecom.compil;
 
 import java.util.ArrayList;
 
-import org.antlr.gunit.ReturnTest;
-
-import fr.telecom.compil.SymbolTable.FunctionSymbol;
 import fr.telecom.compil.SymbolTable.Symbol;
 import fr.telecom.compil.SymbolTable.SymbolNotFoundException;
 import fr.telecom.compil.exceptions.BadNumberArgumentsException;

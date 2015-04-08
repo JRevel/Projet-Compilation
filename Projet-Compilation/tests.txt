@@ -1,0 +1,39 @@
+ do
+	integer i, j, maximum,a
+	array [5..13, 25 .. 72] t, tbis
+	array [0..10, 10..20] tabfaux2
+	
+	function integer fMax (adr x: integer, y: integer)
+		integer b
+    	integer result
+    	if b
+			then result = x 
+        	else result = y
+		fi
+		t[5] = 20
+    	return (result)
+	end
+
+	procedure theEnd( )
+		integer bob
+		array[3..12, 10..56] testarray
+		function integer testFunc(x: integer, bob: integer)
+			return (3)
+		end
+
+    		write "that's all !!"
+	end
+
+	for i in 0..5 do
+		t[i] = false
+	end
+
+	j = t[1]
+	tbis = t
+	tbis[3,j] = 25
+	a = tbis[1,j]
+	j = i*i/j+j
+	maximum = fMax(i, j)
+	write maximum
+	theEnd()
+end

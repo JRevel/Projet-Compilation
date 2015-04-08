@@ -23,7 +23,6 @@ public class ArrayType implements VarType
 		}
 	}
 
-	@Override
 	public String getName() {
 		String result =  "array[";
 		for(int i=0; i<bounds.size(); i++)
@@ -41,7 +40,6 @@ public class ArrayType implements VarType
 		return getName();
 	}
 
-	@Override
 	public int getSize() {
 		int size = 1;
 		for(int i=0; i<bounds.size(); i++)

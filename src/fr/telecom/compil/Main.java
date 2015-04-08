@@ -8,15 +8,15 @@ import java.io.InputStreamReader;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 
+import antlr.RecognitionException;
 import fr.telecom.compil.asm.AsmGenerator;
 import fr.telecom.compil.asm.WriteInstruction;
 
 
 public class Main {
-	public static void main(String[] args)
+	public static void main(String[] args) throws org.antlr.runtime.RecognitionException
 	{
 		ANTLRInputStream input;
 		try {
@@ -35,8 +35,6 @@ public class Main {
 			System.out.println(symbols);
 			
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (RecognitionException e) {
 			e.printStackTrace();
 		}
 		AsmGenerator gen = new AsmGenerator();
