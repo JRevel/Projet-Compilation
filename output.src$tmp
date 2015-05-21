@@ -39,28 +39,6 @@ ldw r0, r1 //func call end
 stw r0, -(sp)
 jsr @printval_
 adi sp, sp, #2
-//ArrayCellAccess start
-ldw r0, #0
-stw r0, -(sp)
-ldw r0, #5
-ldw r1, #1
-sub r0, r1, r0
-ldw r1, #1
-mul r0, r1, r0
-ldw r1, (sp)+
-add r0, r1, r0
-stw r0, -(sp)
-//ArrayCellAccess end
-stw r0, -(sp)
-ldw r1, bp
-ldw r2, #20
-sub r1, r2, r1
-add r1, r0, r1
-add r1, r0, r1
-ldw r0, (r1)
-stw r0, -(sp)
-jsr @printval_
-adi sp, sp, #2
 ldw sp, bp
 ldw bp, (sp)+
 trp #EXIT_EXC

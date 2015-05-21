@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import fr.telecom.compil.exceptions.BadArrayBoundsDeclaration;
 import fr.telecom.compil.exceptions.BadIndexArrayAccessStatique;
+import fr.telecom.compil.exceptions.BadNbDimArray;
 import fr.telecom.compil.exceptions.BadNumberArgumentsException;
 import fr.telecom.compil.exceptions.BadTypeReturnFunction;
 import fr.telecom.compil.exceptions.BooleanIfConditionException;
@@ -51,7 +52,7 @@ public class SemanticAnalyser
 		}
 	}
 	
-	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException, WrongTypeAffectationException, BadIndexArrayAccessStatique, NotIntegerInOperationException, BooleanIfConditionException
+	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException, WrongTypeAffectationException, BadIndexArrayAccessStatique, NotIntegerInOperationException, BooleanIfConditionException, BadNbDimArray
 	{
 		checkVarDef(AST, scopeId, table);
 		checkNbArgFunc(AST,scopeId,table);
@@ -239,13 +240,14 @@ public class SemanticAnalyser
 		}
 	}	
 	//Ajout par Didier
-	private static void checkIndexArrayAccessStatique(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadIndexArrayAccessStatique
+	private static void checkIndexArrayAccessStatique(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadIndexArrayAccessStatique, BadNbDimArray
 	{
 		if (varTree.getLabel().equals("ARRAY_ACCESS"))
 		{
 			SyntaxicTree childName = varTree.getChild(0);
 			ArrayType tableauType = (ArrayType) table.getSymbol(childName.getChild(0).getLabel(), scopeId).type;
 			ArrayList<int[]> bornes =tableauType.getBounds();
+			int nbDim = bornes.size();
 
 			//Valeur rangée dans un tableau
 			if (varTree.getChild(1).getLabel().equals("CELLS"))
@@ -254,19 +256,26 @@ public class SemanticAnalyser
 				//Label Cells
 				SyntaxicTree childCells = varTree.getChild("CELLS");
 				int dim = 0;
-				for (SyntaxicTree child : childCells.getChildren())
+				if (childCells.getChildren().size() != nbDim)
 				{
-					if (child.getLabel().equals("VAR_REF")!=true)
+					throw new BadNbDimArray(varTree.getLineNumber());
+				}
+				else
+				{
+					for (SyntaxicTree child : childCells.getChildren())
 					{
-						int valIndexStat = Integer.valueOf(child.getLabel());
-						int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
-						if(valIndexStat < min || valIndexStat >= max)
+						if (child.getLabel().equals("VAR_REF")!=true)
 						{
-							System.out.println(min +" " + valIndexStat + " " + max );
-							throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
+							int valIndexStat = Integer.valueOf(child.getLabel());
+							int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
+							if(valIndexStat < min || valIndexStat >= max)
+							{
+								System.out.println(min +" " + valIndexStat + " " + max );
+								throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
+							}
 						}
+						dim++;
 					}
-					dim++;
 				}
 
 			}
@@ -277,19 +286,26 @@ public class SemanticAnalyser
 				{
 					//Label Range
 					SyntaxicTree childRange = varTree.getChild("RANGE");
-					int dim = 0;
-					for (SyntaxicTree child : childRange.getChildren())
+					int dim = 0; 
+					if (childRange.getChildren().size() != nbDim)
 					{
-						if (child.getLabel().equals("VAR_REF")!=true)
+						throw new BadNbDimArray(varTree.getLineNumber());
+					}
+					else
+					{
+						for (SyntaxicTree child : childRange.getChildren())
 						{
-							int valIndexStat = Integer.valueOf(child.getLabel());
-							int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
-							if(valIndexStat < min || valIndexStat >= max)
+							if (child.getLabel().equals("VAR_REF")!=true)
 							{
-								throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
+								int valIndexStat = Integer.valueOf(child.getLabel());
+								int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
+								if(valIndexStat < min || valIndexStat >= max)
+								{
+									throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
+								}
 							}
+							dim++;
 						}
-						dim++;
 					}
 
 

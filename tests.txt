@@ -13,5 +13,4 @@ do
 
 	i = 1
 	write bla( )
-	write t[5]
 end
