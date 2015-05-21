@@ -1,36 +1,17 @@
- do
-	integer i, j, maximum
-	array [5..13, 25 .. 72] t, tbis
-
-	function integer fMax (adr x: integer, y: integer)
-		integer result
-		if x > y
-		then result = x
-    		else result = y
-		fi
-			t[5] = 20
-		return (result)
-	end
-
-	function integer theEnd()
-		integer bob
-		array[3..12, 10..56] testarray
-		function integer testFunc(x: integer, bob: integer)
-			return (3)
+do
+	integer i
+	array[1..10] t
+	function integer bla( )
+		function integer sum( )
+			integer j
+			j=25
+			t[5] = j
+			return (t[5]+i)
 		end
-    		write "that's all !!"
-    		return (50436)
+		return (sum( ))
 	end
 
-	for i in 0..5 do
-		t[i] = false
-	end
-
-	j = t[6, 30]
-	tbis = t
-	tbis[5,40] = 25
-	j = i*i/j+j
-	maximum = fMax(t[5], j)
-	write maximum
-	theEnd()
+	i = 1
+	write bla( )
+	write t[5]
 end

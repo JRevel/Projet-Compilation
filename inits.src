@@ -1,0 +1,27 @@
+sp			equ r15
+wr			equ r14
+bp			equ r13
+
+SP			equ r15
+WR			equ r14
+BP			equ r13
+
+EXIT_EXC	EQU   64    // n° d'exception de EXIT
+READ_EXC	EQU   65    // n° d'exception de READ  (lit 1 ligne)
+WRITE_EXC	EQU   66    // n° d'exception de WRITE (affiche texte)
+
+NUL         equ  0     // caractère NUL qui doit terminer une chaîne de caractères
+NULL        equ  0     // pointeur nul
+NIL         equ  0     // fin de liste chaînée
+
+STACK_ADRS  equ 0x1000 // adresse de base de pile
+LOAD_ADRS   equ 0xAE00 // adresse de chargement du programme
+
+            org LOAD_ADRS
+            start main_
+            
+main_		ldw sp, #STACK_ADRS // pile sera au dessus de STACK_ADRS
+        	ldw bp, #NIL
+        	stw bp, -(sp) //dyn chain
+        	stw bp, -(sp) //stat chain
+        	ldw bp, sp

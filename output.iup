@@ -1,16 +1,290 @@
-ff10  origine
-ff60  debut d'execution
-5468   emplacement : 65296  (0xff10)  ligne n° 3	STR0	STRING	"This is a test"
-6973   emplacement : 65298  (0xff12) 
-2069   emplacement : 65300  (0xff14) 
-7320   emplacement : 65302  (0xff16) 
-6120   emplacement : 65304  (0xff18) 
-7465   emplacement : 65306  (0xff1a) 
-7374   emplacement : 65308  (0xff1c) 
-0000   emplacement : 65310  (0xff1e) 
-6080   emplacement : 65312  (0xff20)  ligne n° 4		LDW	R0, #STR0
-ff10   emplacement : 65314  (0xff22) 
-0b00   emplacement : 65316  (0xff24)  ligne n° 5		TRP	#66
-0042   emplacement : 65318  (0xff26) 
-0b00   emplacement : 65320  (0xff28)  ligne n° 7		TRP #64
-0040   emplacement : 65322  (0xff2a) 
+ae00  origine
+ae00  debut d'execution
+6f80   emplacement : 44544  (0xae00)  ligne n° 23	main_		ldw sp, #STACK_ADRS // pile sera au dessus de STACK_ADRS
+1000   emplacement : 44546  (0xae02) 
+6d80   emplacement : 44548  (0xae04)  ligne n° 24	        	ldw bp, #NIL
+0000   emplacement : 44550  (0xae06) 
+6d4f   emplacement : 44552  (0xae08)  ligne n° 25	        	stw bp, -(sp) //dyn chain
+6d4f   emplacement : 44554  (0xae0a)  ligne n° 26	        	stw bp, -(sp) //stat chain
+6d9f   emplacement : 44556  (0xae0c)  ligne n° 27	        	ldw bp, sp
+4eff   emplacement : 44558  (0xae0e)  ligne n° 28	adi sp, sp, #-18 //allocation de l'espace pour t
+ffee   emplacement : 44560  (0xae10) 
+4eff   emplacement : 44562  (0xae12)  ligne n° 29	adi sp, sp, #-2 //allocation de l'espace pour i
+fffe   emplacement : 44564  (0xae14) 
+6080   emplacement : 44566  (0xae16)  ligne n° 30	ldw r0, #1
+0001   emplacement : 44568  (0xae18) 
+606d   emplacement : 44570  (0xae1a)  ligne n° 31	stw r0, (bp)-2
+fffe   emplacement : 44572  (0xae1c) 
+6a80   emplacement : 44574  (0xae1e)  ligne n° 33	ldw r10, #0// function depth : 1 , Scope depth : 0
+0000   emplacement : 44576  (0xae20) 
+0a50   emplacement : 44578  (0xae22)  ligne n° 34	jsr @function_bla_ //func call
+ae7c   emplacement : 44580  (0xae24) 
+6190   emplacement : 44582  (0xae26)  ligne n° 35	ldw r1, r0
+6080   emplacement : 44584  (0xae28)  ligne n° 36	ldw r0, #0
+0000   emplacement : 44586  (0xae2a) 
+ef0f   emplacement : 44588  (0xae2c)  ligne n° 37	add sp, r0, sp
+6091   emplacement : 44590  (0xae2e)  ligne n° 38	ldw r0, r1 //func call end
+604f   emplacement : 44592  (0xae30)  ligne n° 39	stw r0, -(sp)
+0a50   emplacement : 44594  (0xae32)  ligne n° 40	jsr @printval_
+af94   emplacement : 44596  (0xae34) 
+4eff   emplacement : 44598  (0xae36)  ligne n° 41	adi sp, sp, #2
+0002   emplacement : 44600  (0xae38) 
+6080   emplacement : 44602  (0xae3a)  ligne n° 43	ldw r0, #0
+0000   emplacement : 44604  (0xae3c) 
+604f   emplacement : 44606  (0xae3e)  ligne n° 44	stw r0, -(sp)
+6080   emplacement : 44608  (0xae40)  ligne n° 45	ldw r0, #5
+0005   emplacement : 44610  (0xae42) 
+6180   emplacement : 44612  (0xae44)  ligne n° 46	ldw r1, #1
+0001   emplacement : 44614  (0xae46) 
+f010   emplacement : 44616  (0xae48)  ligne n° 47	sub r0, r1, r0
+6180   emplacement : 44618  (0xae4a)  ligne n° 48	ldw r1, #1
+0001   emplacement : 44620  (0xae4c) 
+b010   emplacement : 44622  (0xae4e)  ligne n° 49	mul r0, r1, r0
+61bf   emplacement : 44624  (0xae50)  ligne n° 50	ldw r1, (sp)+
+e010   emplacement : 44626  (0xae52)  ligne n° 51	add r0, r1, r0
+604f   emplacement : 44628  (0xae54)  ligne n° 52	stw r0, -(sp)
+604f   emplacement : 44630  (0xae56)  ligne n° 54	stw r0, -(sp)
+619d   emplacement : 44632  (0xae58)  ligne n° 55	ldw r1, bp
+6280   emplacement : 44634  (0xae5a)  ligne n° 56	ldw r2, #20
+0014   emplacement : 44636  (0xae5c) 
+f121   emplacement : 44638  (0xae5e)  ligne n° 57	sub r1, r2, r1
+e101   emplacement : 44640  (0xae60)  ligne n° 58	add r1, r0, r1
+e101   emplacement : 44642  (0xae62)  ligne n° 59	add r1, r0, r1
+60a1   emplacement : 44644  (0xae64)  ligne n° 60	ldw r0, (r1)
+604f   emplacement : 44646  (0xae66)  ligne n° 61	stw r0, -(sp)
+0a50   emplacement : 44648  (0xae68)  ligne n° 62	jsr @printval_
+af94   emplacement : 44650  (0xae6a) 
+4eff   emplacement : 44652  (0xae6c)  ligne n° 63	adi sp, sp, #2
+0002   emplacement : 44654  (0xae6e) 
+6f9d   emplacement : 44656  (0xae70)  ligne n° 64	ldw sp, bp
+6dbf   emplacement : 44658  (0xae72)  ligne n° 65	ldw bp, (sp)+
+0b00   emplacement : 44660  (0xae74)  ligne n° 66	trp #EXIT_EXC
+0040   emplacement : 44662  (0xae76) 
+0950   emplacement : 44664  (0xae78)  ligne n° 67	jea @main_
+ae00   emplacement : 44666  (0xae7a) 
+619d   emplacement : 44668  (0xae7c)  ligne n° 68	function_bla_ ldw r1, bp
+6d4f   emplacement : 44670  (0xae7e)  ligne n° 69	stw bp, -(sp) // dyn chain
+6080   emplacement : 44672  (0xae80)  ligne n° 70	ldw r0, #0
+0000   emplacement : 44674  (0xae82) 
+4fa0   emplacement : 44676  (0xae84)  ligne n° 71	stat_calc_start_1 cmp r10, r0
+150e   emplacement : 44678  (0xae86)  ligne n° 72	ble stat_calc_end_1-$-2
+4e11   emplacement : 44680  (0xae88)  ligne n° 73	adi r1, r1, #2
+0002   emplacement : 44682  (0xae8a) 
+61a1   emplacement : 44684  (0xae8c)  ligne n° 74	ldw r1, (r1)
+6080   emplacement : 44686  (0xae8e)  ligne n° 75	ldw r0, #-1
+ffff   emplacement : 44688  (0xae90) 
+ea0a   emplacement : 44690  (0xae92)  ligne n° 76	add r10, r0, r10
+11ee   emplacement : 44692  (0xae94)  ligne n° 77	bmp stat_calc_start_1-$-2
+614f   emplacement : 44694  (0xae96)  ligne n° 78	stat_calc_end_1 stw r1, -(sp) // stat chain
+6d9f   emplacement : 44696  (0xae98)  ligne n° 79	ldw bp, sp // maj bas de pile
+6a80   emplacement : 44698  (0xae9a)  ligne n° 81	ldw r10, #0// function depth : 2 , Scope depth : 1
+0000   emplacement : 44700  (0xae9c) 
+0a50   emplacement : 44702  (0xae9e)  ligne n° 82	jsr @function_sum_ //func call
+aeb6   emplacement : 44704  (0xaea0) 
+6190   emplacement : 44706  (0xaea2)  ligne n° 83	ldw r1, r0
+6080   emplacement : 44708  (0xaea4)  ligne n° 84	ldw r0, #0
+0000   emplacement : 44710  (0xaea6) 
+ef0f   emplacement : 44712  (0xaea8)  ligne n° 85	add sp, r0, sp
+6091   emplacement : 44714  (0xaeaa)  ligne n° 86	ldw r0, r1 //func call end
+6f9d   emplacement : 44716  (0xaeac)  ligne n° 88	ldw sp, bp //maj sommet de pile
+4eff   emplacement : 44718  (0xaeae)  ligne n° 89	adi sp, sp, #2 // stat chain
+0002   emplacement : 44720  (0xaeb0) 
+6dbf   emplacement : 44722  (0xaeb2)  ligne n° 90	ldw bp, (sp)+ // dyn chain
+0200   emplacement : 44724  (0xaeb4)  ligne n° 91	rts
+619d   emplacement : 44726  (0xaeb6)  ligne n° 92	function_sum_ ldw r1, bp
+6d4f   emplacement : 44728  (0xaeb8)  ligne n° 93	stw bp, -(sp) // dyn chain
+6080   emplacement : 44730  (0xaeba)  ligne n° 94	ldw r0, #0
+0000   emplacement : 44732  (0xaebc) 
+4fa0   emplacement : 44734  (0xaebe)  ligne n° 95	stat_calc_start_2 cmp r10, r0
+150e   emplacement : 44736  (0xaec0)  ligne n° 96	ble stat_calc_end_2-$-2
+4e11   emplacement : 44738  (0xaec2)  ligne n° 97	adi r1, r1, #2
+0002   emplacement : 44740  (0xaec4) 
+61a1   emplacement : 44742  (0xaec6)  ligne n° 98	ldw r1, (r1)
+6080   emplacement : 44744  (0xaec8)  ligne n° 99	ldw r0, #-1
+ffff   emplacement : 44746  (0xaeca) 
+ea0a   emplacement : 44748  (0xaecc)  ligne n° 100	add r10, r0, r10
+11ee   emplacement : 44750  (0xaece)  ligne n° 101	bmp stat_calc_start_2-$-2
+614f   emplacement : 44752  (0xaed0)  ligne n° 102	stat_calc_end_2 stw r1, -(sp) // stat chain
+6d9f   emplacement : 44754  (0xaed2)  ligne n° 103	ldw bp, sp // maj bas de pile
+4eff   emplacement : 44756  (0xaed4)  ligne n° 104	adi sp, sp, #-2 //allocation de l'espace pour j
+fffe   emplacement : 44758  (0xaed6) 
+6080   emplacement : 44760  (0xaed8)  ligne n° 105	ldw r0, #25
+0019   emplacement : 44762  (0xaeda) 
+606d   emplacement : 44764  (0xaedc)  ligne n° 106	stw r0, (bp)-2
+fffe   emplacement : 44766  (0xaede) 
+619d   emplacement : 44768  (0xaee0)  ligne n° 110	ldw r1, bp
+60e1   emplacement : 44770  (0xaee2)  ligne n° 111	ldw r0, (r1)-2
+fffe   emplacement : 44772  (0xaee4) 
+604f   emplacement : 44774  (0xaee6)  ligne n° 112	stw r0, -(sp)
+6080   emplacement : 44776  (0xaee8)  ligne n° 114	ldw r0, #0
+0000   emplacement : 44778  (0xaeea) 
+604f   emplacement : 44780  (0xaeec)  ligne n° 115	stw r0, -(sp)
+6080   emplacement : 44782  (0xaeee)  ligne n° 116	ldw r0, #5
+0005   emplacement : 44784  (0xaef0) 
+6180   emplacement : 44786  (0xaef2)  ligne n° 117	ldw r1, #1
+0001   emplacement : 44788  (0xaef4) 
+f010   emplacement : 44790  (0xaef6)  ligne n° 118	sub r0, r1, r0
+6180   emplacement : 44792  (0xaef8)  ligne n° 119	ldw r1, #1
+0001   emplacement : 44794  (0xaefa) 
+b010   emplacement : 44796  (0xaefc)  ligne n° 120	mul r0, r1, r0
+61bf   emplacement : 44798  (0xaefe)  ligne n° 121	ldw r1, (sp)+
+e010   emplacement : 44800  (0xaf00)  ligne n° 122	add r0, r1, r0
+604f   emplacement : 44802  (0xaf02)  ligne n° 123	stw r0, -(sp)
+60bf   emplacement : 44804  (0xaf04)  ligne n° 125	ldw r0, (sp)+
+619d   emplacement : 44806  (0xaf06)  ligne n° 126	ldw r1, bp
+4e11   emplacement : 44808  (0xaf08)  ligne n° 127	adi r1, r1, #2
+0002   emplacement : 44810  (0xaf0a) 
+61a1   emplacement : 44812  (0xaf0c)  ligne n° 128	ldw r1, (r1)
+4e11   emplacement : 44814  (0xaf0e)  ligne n° 129	adi r1, r1, #2
+0002   emplacement : 44816  (0xaf10) 
+61a1   emplacement : 44818  (0xaf12)  ligne n° 130	ldw r1, (r1)
+6280   emplacement : 44820  (0xaf14)  ligne n° 131	ldw r2, #20
+0014   emplacement : 44822  (0xaf16) 
+f121   emplacement : 44824  (0xaf18)  ligne n° 132	sub r1, r2, r1
+e101   emplacement : 44826  (0xaf1a)  ligne n° 133	add r1, r0, r1
+e101   emplacement : 44828  (0xaf1c)  ligne n° 134	add r1, r0, r1
+60bf   emplacement : 44830  (0xaf1e)  ligne n° 135	ldw r0, (sp)+
+6021   emplacement : 44832  (0xaf20)  ligne n° 136	stw r0, (r1)
+6080   emplacement : 44834  (0xaf22)  ligne n° 138	ldw r0, #0
+0000   emplacement : 44836  (0xaf24) 
+604f   emplacement : 44838  (0xaf26)  ligne n° 139	stw r0, -(sp)
+6080   emplacement : 44840  (0xaf28)  ligne n° 140	ldw r0, #5
+0005   emplacement : 44842  (0xaf2a) 
+6180   emplacement : 44844  (0xaf2c)  ligne n° 141	ldw r1, #1
+0001   emplacement : 44846  (0xaf2e) 
+f010   emplacement : 44848  (0xaf30)  ligne n° 142	sub r0, r1, r0
+6180   emplacement : 44850  (0xaf32)  ligne n° 143	ldw r1, #1
+0001   emplacement : 44852  (0xaf34) 
+b010   emplacement : 44854  (0xaf36)  ligne n° 144	mul r0, r1, r0
+61bf   emplacement : 44856  (0xaf38)  ligne n° 145	ldw r1, (sp)+
+e010   emplacement : 44858  (0xaf3a)  ligne n° 146	add r0, r1, r0
+604f   emplacement : 44860  (0xaf3c)  ligne n° 147	stw r0, -(sp)
+604f   emplacement : 44862  (0xaf3e)  ligne n° 149	stw r0, -(sp)
+619d   emplacement : 44864  (0xaf40)  ligne n° 150	ldw r1, bp
+4e11   emplacement : 44866  (0xaf42)  ligne n° 151	adi r1, r1, #2
+0002   emplacement : 44868  (0xaf44) 
+61a1   emplacement : 44870  (0xaf46)  ligne n° 152	ldw r1, (r1)
+4e11   emplacement : 44872  (0xaf48)  ligne n° 153	adi r1, r1, #2
+0002   emplacement : 44874  (0xaf4a) 
+61a1   emplacement : 44876  (0xaf4c)  ligne n° 154	ldw r1, (r1)
+6280   emplacement : 44878  (0xaf4e)  ligne n° 155	ldw r2, #20
+0014   emplacement : 44880  (0xaf50) 
+f121   emplacement : 44882  (0xaf52)  ligne n° 156	sub r1, r2, r1
+e101   emplacement : 44884  (0xaf54)  ligne n° 157	add r1, r0, r1
+e101   emplacement : 44886  (0xaf56)  ligne n° 158	add r1, r0, r1
+60a1   emplacement : 44888  (0xaf58)  ligne n° 159	ldw r0, (r1)
+604f   emplacement : 44890  (0xaf5a)  ligne n° 160	stw r0, -(sp)
+619d   emplacement : 44892  (0xaf5c)  ligne n° 164	ldw r1, bp
+4e11   emplacement : 44894  (0xaf5e)  ligne n° 165	adi r1, r1, #2
+0002   emplacement : 44896  (0xaf60) 
+61a1   emplacement : 44898  (0xaf62)  ligne n° 166	ldw r1, (r1)
+4e11   emplacement : 44900  (0xaf64)  ligne n° 167	adi r1, r1, #2
+0002   emplacement : 44902  (0xaf66) 
+61a1   emplacement : 44904  (0xaf68)  ligne n° 168	ldw r1, (r1)
+60e1   emplacement : 44906  (0xaf6a)  ligne n° 169	ldw r0, (r1)-2
+fffe   emplacement : 44908  (0xaf6c) 
+604f   emplacement : 44910  (0xaf6e)  ligne n° 170	stw r0, -(sp)
+62bf   emplacement : 44912  (0xaf70)  ligne n° 171	ldw r2, (sp)+
+61bf   emplacement : 44914  (0xaf72)  ligne n° 172	ldw r1, (sp)+
+e120   emplacement : 44916  (0xaf74)  ligne n° 173	add r1, r2, r0
+6f9d   emplacement : 44918  (0xaf76)  ligne n° 175	ldw sp, bp //maj sommet de pile
+4eff   emplacement : 44920  (0xaf78)  ligne n° 176	adi sp, sp, #2 // stat chain
+0002   emplacement : 44922  (0xaf7a) 
+6dbf   emplacement : 44924  (0xaf7c)  ligne n° 177	ldw bp, (sp)+ // dyn chain
+0200   emplacement : 44926  (0xaf7e)  ligne n° 178	rts
+6f9d   emplacement : 44928  (0xaf80)  ligne n° 179	ldw sp, bp //maj sommet de pile
+4eff   emplacement : 44930  (0xaf82)  ligne n° 180	adi sp, sp, #2 // stat chain
+0002   emplacement : 44932  (0xaf84) 
+6dbf   emplacement : 44934  (0xaf86)  ligne n° 181	ldw bp, (sp)+ // dyn chain
+0200   emplacement : 44936  (0xaf88)  ligne n° 182	rts
+6f9d   emplacement : 44938  (0xaf8a)  ligne n° 183	ldw sp, bp //maj sommet de pile
+4eff   emplacement : 44940  (0xaf8c)  ligne n° 184	adi sp, sp, #2 // stat chain
+0002   emplacement : 44942  (0xaf8e) 
+6dbf   emplacement : 44944  (0xaf90)  ligne n° 185	ldw bp, (sp)+ // dyn chain
+0200   emplacement : 44946  (0xaf92)  ligne n° 186	rts
+6d4f   emplacement : 44948  (0xaf94)  ligne n° 190	printval_ stw bp, -(sp)
+6d9f   emplacement : 44950  (0xaf96)  ligne n° 191	          ldw bp, sp
+4eff   emplacement : 44952  (0xaf98)  ligne n° 195	        adi sp, sp, #-8   // riserve place pour text sur pile (8 octets); 
+fff8   emplacement : 44954  (0xaf9a) 
+6080   emplacement : 44956  (0xaf9c)  ligne n° 200	        ldw r0, #10       // charge 10 (pour base dicimale) dans r0
+000a   emplacement : 44958  (0xaf9e) 
+604f   emplacement : 44960  (0xafa0)  ligne n° 201	        stw r0, -(sp)     // empile contenu de r0 (paramhtre b)
+4ed0   emplacement : 44962  (0xafa2)  ligne n° 203	        adi bp, r0, #-8   // r0 = bp - 8 = adresse du tableau text
+fff8   emplacement : 44964  (0xafa4) 
+604f   emplacement : 44966  (0xafa6)  ligne n° 204	        stw r0, -(sp)     // empile contenu de r0 (paramhtre p)
+60ed   emplacement : 44968  (0xafa8)  ligne n° 206	        ldw r0, (bp)4   // charge r0 avec x
+0004   emplacement : 44970  (0xafaa) 
+604f   emplacement : 44972  (0xafac)  ligne n° 207	        stw r0, -(sp)     // empile contenu de r0 (paramhtre i)
+0a50   emplacement : 44974  (0xafae)  ligne n° 209	        jsr @itoa_        // appelle fonction itoa d'adresse itoa_
+afca   emplacement : 44976  (0xafb0) 
+4eff   emplacement : 44978  (0xafb2)  ligne n° 211	        adi sp, sp, #6    // nettoie la pile des paramhtres 
+0006   emplacement : 44980  (0xafb4) 
+4ed0   emplacement : 44982  (0xafb6)  ligne n° 216	        adi bp, r0, #-8   // r0 = bp - 8 = adresse du tableau text
+fff8   emplacement : 44984  (0xafb8) 
+604f   emplacement : 44986  (0xafba)  ligne n° 217	        stw r0, -(sp)     // empile contenu de r0 (paramhtre p)
+0a50   emplacement : 44988  (0xafbc)  ligne n° 219	        jsr @print_       // appelle fonction print d'adresse print_
+b02a   emplacement : 44990  (0xafbe) 
+4eff   emplacement : 44992  (0xafc0)  ligne n° 221	        adi sp, sp, #2    // nettoie la pile des paramhtres
+0002   emplacement : 44994  (0xafc2) 
+6f9d   emplacement : 44996  (0xafc4)  ligne n° 223	        ldw sp, bp
+6dbf   emplacement : 44998  (0xafc6)  ligne n° 224	        ldw bp, (sp)+
+0200   emplacement : 45000  (0xafc8)  ligne n° 225	        rts
+6d4f   emplacement : 45002  (0xafca)  ligne n° 261	itoa_   stw bp, -(sp)
+6d9f   emplacement : 45004  (0xafcc)  ligne n° 262	        ldw bp, sp
+60ed   emplacement : 45006  (0xafce)  ligne n° 265	        ldw r0, (bp)ITOA_I    // r0 = i    
+0004   emplacement : 45008  (0xafd0) 
+61ed   emplacement : 45010  (0xafd2)  ligne n° 266	        ldw r1, (bp)ITOA_B    // r1 = b
+0008   emplacement : 45012  (0xafd4) 
+2320   emplacement : 45014  (0xafd6)  ligne n° 271	        ldq ASCII_SP, r3      // code ASCII de espace (SPace) -> r3
+2e0a   emplacement : 45016  (0xafd8)  ligne n° 272	        ldq 10, wr            // 10 -> wr
+4f1e   emplacement : 45018  (0xafda)  ligne n° 273	        cmp r1, wr            // charge les indicateurs de b - 10
+130c   emplacement : 45020  (0xafdc)  ligne n° 274	        bne NOSIGN-$-2        // si non igal (donc si b != 10) saute en NOSIGN, sinon calcule signe
+232b   emplacement : 45022  (0xafde)  ligne n° 275	        ldq ASCII_PLUS, r3    // charge le code ASCII du signe plus + dans r3
+0c10   emplacement : 45024  (0xafe0)  ligne n° 276	        tst r0                // charge les indicateurs de r0 et donc de i
+1404   emplacement : 45026  (0xafe2)  ligne n° 277	        bge POSIT-$-2         // saute en POSIT si i >= 0
+4700   emplacement : 45028  (0xafe4)  ligne n° 278	        neg r0, r0            // change le signe de r0
+232d   emplacement : 45030  (0xafe6)  ligne n° 279	        ldq ASCII_MINUS, r3   // charge le code ASCII du signe moins - dans r3
+0000   emplacement : 45032  (0xafe8)  ligne n° 280	POSIT   NOP                   // r3 = code ASCII de signe: SP pour aucun, - ou +
+6290   emplacement : 45034  (0xafea)  ligne n° 284	NOSIGN  ldw r2, r0            // r2 <- r0
+6092   emplacement : 45036  (0xafec)  ligne n° 285	CNVLOOP ldw r0, r2            // r0 <- r2
+4211   emplacement : 45038  (0xafee)  ligne n° 290	        srl r1, r1            // r1 = b/2
+4c04   emplacement : 45040  (0xaff0)  ligne n° 291	        ani r0, r4, #1        // ANd Immidiate entre r0 et 00...01 vers r4:
+0001   emplacement : 45042  (0xaff2) 
+4200   emplacement : 45044  (0xaff4)  ligne n° 293	        srl r0, r0            // r0 / 2 -> r0
+a012   emplacement : 45046  (0xaff6)  ligne n° 294	        div r0, r1, r2        // quotient = r0 / r1 -> r2, reste' = r0 % r1 -> r0
+4600   emplacement : 45048  (0xaff8)  ligne n° 295	        shl r0, r0            // r0 = 2 * reste'
+e040   emplacement : 45050  (0xaffa)  ligne n° 296	        add r0, r4, r0        // r0 = reste = 2 * reste' + reste" => r0 = chiffre
+4611   emplacement : 45052  (0xaffc)  ligne n° 297	        shl r1, r1            // r1 = b
+30f6   emplacement : 45054  (0xaffe)  ligne n° 299	        adq -10, r0           // chiffre - 10 -> r0 
+1404   emplacement : 45056  (0xb000)  ligne n° 300	        bge LETTER-$-2        // saute en LETTER si chiffre >= 10
+303a   emplacement : 45058  (0xb002)  ligne n° 301	        adq 10+ASCII_0, r0    // ajoute 10 => r0 = chiffre, ajoute code ASCII de 0 
+1102   emplacement : 45060  (0xb004)  ligne n° 303	        bmp STKCHR-$-2        // saute en STKCHR 
+3041   emplacement : 45062  (0xb006)  ligne n° 305	LETTER  adq ASCII_A, r0       // r0 = ASCII(A) pour chiffre = 10, ASCII(B) pour 11 ...
+604f   emplacement : 45064  (0xb008)  ligne n° 307	STKCHR  stw r0, -(sp)         // empile code ASCII du chiffre 
+0c12   emplacement : 45066  (0xb00a)  ligne n° 309	        tst r2                // charge les indicateurs en fonction du quotient ds r2)
+13de   emplacement : 45068  (0xb00c)  ligne n° 310	        bne CNVLOOP-$-2       // boucle si quotient non nul; sinon sort
+61ed   emplacement : 45070  (0xb00e)  ligne n° 315	        ldw r1, (bp)ITOA_P    // r1 pointe sur le dibut du tampon dij` alloui 
+0006   emplacement : 45072  (0xb010) 
+5331   emplacement : 45074  (0xb012)  ligne n° 316	        stb r3, (r1)+         // copie le signe dans le tampon
+60bf   emplacement : 45076  (0xb014)  ligne n° 317	CPYLOOP ldw r0, (sp)+         // dipile code du chiffre gauche (sur un mot) dans r0
+5031   emplacement : 45078  (0xb016)  ligne n° 318	        stb r0, (r1)+         // copie code du chiffre dans un Byte du tampon de gauche ` droite
+4ffd   emplacement : 45080  (0xb018)  ligne n° 319	        cmp sp, bp            // compare sp et sa valeur avant empilement des caracthres qui itait bp
+13f8   emplacement : 45082  (0xb01a)  ligne n° 320	        bne CPYLOOP-$-2       // boucle s'il reste au moins un chiffre sur la pile
+2000   emplacement : 45084  (0xb01c)  ligne n° 321	        ldq NUL, r0           // charge le code du caracthre NUL dans r0
+5031   emplacement : 45086  (0xb01e)  ligne n° 322	        stb r0, (r1)+         // sauve code NUL pour terminer la channe de caracthres
+60ed   emplacement : 45088  (0xb020)  ligne n° 325	        ldw r0, (bp)ITOA_P    // retourne le pointeur sur la channe de caracthres
+0006   emplacement : 45090  (0xb022) 
+6f9d   emplacement : 45092  (0xb024)  ligne n° 328	        ldw sp, bp            // sp <- bp : abandonne infos locales; sp pointe sur ancinne valeur de bp
+6dbf   emplacement : 45094  (0xb026)  ligne n° 329	        ldw bp, (sp)+         // dipile ancienne valeur de bp dans bp; sp pointe sur adresse de retour
+0200   emplacement : 45096  (0xb028)  ligne n° 331	        rts                   // retourne au programme appelant
+2100   emplacement : 45098  (0xb02a)  ligne n° 339	print_     LDQ 0, R1      // R1 = taille donnies locales (ici 0) de fonction appelie
+6d4f   emplacement : 45100  (0xb02c)  ligne n° 342	           STW BP, -(SP)  // empile le contenu du registre BP
+6d9f   emplacement : 45102  (0xb02e)  ligne n° 343	           LDW BP, SP     // charge contenu SP ds BP qui pointe sur sa sauvegarde
+ff1f   emplacement : 45104  (0xb030)  ligne n° 344	           SUB SP, R1, SP // riserve R1 octets sur la pile pour la variable locale z
+60ed   emplacement : 45106  (0xb032)  ligne n° 347	           LDW R0, (BP)4  // R0 = M[BP + 4]
+0004   emplacement : 45108  (0xb034) 
+0b00   emplacement : 45110  (0xb036)  ligne n° 350	           TRP #WRITE_EXC // lance trappe n0 WRITE_EXC: affiche texte d'adresse R0
+0042   emplacement : 45112  (0xb038) 
+6f9d   emplacement : 45114  (0xb03a)  ligne n° 355	           LDW SP, BP    // charge SP avec contenu de BP: abandon infos locales
+6dbf   emplacement : 45116  (0xb03c)  ligne n° 356	           LDW BP, (SP)+ // dipile ancien BP dans BP
+0200   emplacement : 45118  (0xb03e)  ligne n° 358	           RTS  // retour au programme appelant

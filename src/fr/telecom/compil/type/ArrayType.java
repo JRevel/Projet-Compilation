@@ -46,7 +46,7 @@ public class ArrayType implements VarType
 		{
 			size *= (bounds.get(i)[1]-bounds.get(i)[0]);
 		}
-		return size*4;
+		return size*2;
 	}
 
 	public ArrayList<int[]> getBounds() {

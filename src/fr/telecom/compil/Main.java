@@ -1,18 +1,15 @@
 package fr.telecom.compil;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTree;
 
-import antlr.RecognitionException;
 import fr.telecom.compil.asm.AsmGenerator;
-import fr.telecom.compil.asm.WriteInstruction;
 
 
 public class Main {
@@ -34,30 +31,77 @@ public class Main {
 			SemanticAnalyser.checkScope(AST, symbols);
 			System.out.println(symbols);
 			
+			AsmGenerator gen = new AsmGenerator();
+			try {
+				FileOutputStream fileOut = new FileOutputStream("output.src");
+				String code = "";
+				code += gen.genInitCode(0xFF10, 0xFF60);
+				code += symbols.getScope(0).genScopeVarAllocation();
+				code += gen.genCode(AST.getChild("INSTRUCTIONS"), symbols.getScope(0));
+				code += gen.genMainEnd();
+				
+				code += genFunctionCode(AST, symbols, gen);
+
+				code += gen.genPrintCode();
+				fileOut.write(code.getBytes());
+				fileOut.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		AsmGenerator gen = new AsmGenerator();
-		try {
-			FileOutputStream fileOut = new FileOutputStream("output.src");
-			String code = "";
-			code += gen.genInitCode(0xFF10, 0xFF60);
-			code += gen.genCode(new WriteInstruction("This is a test"));
-			code += gen.genEndCode();
-			fileOut.write(code.getBytes());
-			fileOut.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
+
+		runCommand("java -jar MicroPIUP/microPIUP.jar -ass output.src", false, true);
+		runCommand("java -jar microPIUP/microPIUP.jar -batch output.iup", false, false);
+	}
+	
+	private static int scopeToGen = 0;
+	
+	public static String genFunctionCode(SyntaxicTree AST, SymbolTable symbols, AsmGenerator gen)
+	{
+		String code = "";
+		SyntaxicTree declTree = AST.getChild("DECLARATIONS");
+		if(declTree == null)
+				return code;
+		ArrayList<SyntaxicTree> functionTrees = declTree.getChildren("FUNCTION");
+		for(int i=0; i<functionTrees.size(); i++)
+		{
+			code += "function_" + functionTrees.get(i).getChild("PROTOTYPE").getChild("NAME").getChild().getLabel() + "_ ";
+			System.out.println("function_" + functionTrees.get(i).getChild("PROTOTYPE").getChild("NAME").getChild().getLabel() + "_ ");
+			Scope scope = symbols.getScope(++scopeToGen);
+			code += scope.genScopeEntrance();
+			code += scope.genScopeVarAllocation();
+			code += gen.genCode(functionTrees.get(i).getChild("INSTRUCTIONS"), scope);
+			code += genFunctionCode(functionTrees.get(i), symbols, gen);
+			code += scope.genScopeEnd();
 		}
+		return code;
+	}
+	
+	public static void runCommand(String command, boolean errorSilent, boolean outputSilent)
+	{
 		try {
-			Process proc = Runtime.getRuntime().exec("java -jar MicroPIUP/microPIUP.jar -ass output.src");
-			BufferedReader in = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-			String line;
-			while((line = in.readLine()) != null)
-			{
-				System.err.println(line);
-			}
+			Runtime rt = Runtime.getRuntime();
+	        Process proc = rt.exec(command);
+	        StreamGobbler errorGobbler = new 
+	            StreamGobbler(proc.getErrorStream(), "ERROR", errorSilent);            
+	        
+	        StreamGobbler outputGobbler = new 
+	            StreamGobbler(proc.getInputStream(), "OUTPUT", outputSilent);
+	            
+	        errorGobbler.start();
+	        outputGobbler.start();
+	                                
+	        int exitVal;
+				exitVal = proc.waitFor();
+	        System.out.println("ExitValue: " + exitVal);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

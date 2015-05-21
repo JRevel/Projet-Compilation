@@ -2,8 +2,6 @@ package fr.telecom.compil;
 
 import java.util.ArrayList;
 
-import fr.telecom.compil.SymbolTable.Symbol;
-import fr.telecom.compil.SymbolTable.SymbolNotFoundException;
 import fr.telecom.compil.exceptions.BadArrayBoundsDeclaration;
 import fr.telecom.compil.exceptions.BadIndexArrayAccessStatique;
 import fr.telecom.compil.exceptions.BadNumberArgumentsException;
@@ -12,6 +10,7 @@ import fr.telecom.compil.exceptions.BooleanIfConditionException;
 import fr.telecom.compil.exceptions.NoReturnException;
 import fr.telecom.compil.exceptions.NotIntegerInOperationException;
 import fr.telecom.compil.exceptions.SemanticException;
+import fr.telecom.compil.exceptions.SymbolNotFoundException;
 import fr.telecom.compil.exceptions.VarNotFoundException;
 import fr.telecom.compil.exceptions.WrongTypeAffectationException;
 import fr.telecom.compil.exceptions.WrongTypeArgumentsException;
@@ -64,7 +63,7 @@ public class SemanticAnalyser
 		checkTypeArithmeticOperation(AST, scopeId, table);
 		checkTypeIfCondition(AST, scopeId, table);
 		checkTypeLowerGreaterOperation(AST, scopeId, table);
-		//checkForRange(AST, scopeId, table);
+		checkForRange(AST, scopeId, table);
 		
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
@@ -129,7 +128,7 @@ public class SemanticAnalyser
 	}
 	private static void checkTypeArgumentsFunc(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, WrongTypeArgumentsException
 	{
-		if (varTree.getLabel().equals("FUNC_CALL"))
+		/*if (varTree.getLabel().equals("FUNC_CALL"))
 		{
 			VarType TypeArg;
 			String FuncName = varTree.getChild("NAME").getChild().getLabel();
@@ -145,7 +144,7 @@ public class SemanticAnalyser
 				if (!TypeArg.getName().equals(TypeFunc.getName()))
 					throw new WrongTypeArgumentsException(varTree.getLineNumber(), FuncName, ArgName, TypeArg, TypeFunc);
 			}
-		}
+		}*/
 	}
 	private static void checkTypeArgumentsProc(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, WrongTypeArgumentsException
 	{

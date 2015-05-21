@@ -13,7 +13,7 @@ public class IntegerType implements VarType {
 	}
 
 	public int getSize() {
-		return 4;
+		return 2;
 	}
 
 }

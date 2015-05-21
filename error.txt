@@ -1,0 +1,372 @@
+Listing d'assemblage ********************************
+1	sp			equ r15
+2	wr			equ r14
+3	bp			equ r13
+4	
+5	SP			equ r15
+6	WR			equ r14
+7	BP			equ r13
+8	
+9	EXIT_EXC	EQU   64    // n0 d'exception de EXIT
+10	READ_EXC	EQU   65    // n0 d'exception de READ  (lit 1 ligne)
+11	WRITE_EXC	EQU   66    // n0 d'exception de WRITE (affiche texte)
+12	
+13	NUL         equ  0     // caracthre NUL qui doit terminer une channe de caracthres
+14	NULL        equ  0     // pointeur nul
+15	NIL         equ  0     // fin de liste channie
+16	
+17	STACK_ADRS  equ 0x1000 // adresse de base de pile
+18	LOAD_ADRS   equ 0xFE00 // adresse de chargement du programme
+19	
+20	            org LOAD_ADRS
+21	            start main_
+22	            
+23	main_		ldw sp, #STACK_ADRS // pile sera au dessus de STACK_ADRS
+	65024 (0xfe00)	6f80
+	65026 (0xfe02)	1000
+24	        	ldw bp, #NIL
+	65028 (0xfe04)	6d80
+	65030 (0xfe06)	0000
+25	        	stw bp, -(sp)
+	65032 (0xfe08)	6d4f
+26	        	ldw bp, sp
+	65034 (0xfe0a)	6d9f
+27	adi sp, sp, #-2 //allocation de l'espace pour x
+	65036 (0xfe0c)	4eff
+	65038 (0xfe0e)	fffe
+28	adi sp, sp, #-2 //allocation de l'espace pour y
+	65040 (0xfe10)	4eff
+	65042 (0xfe12)	fffe
+29	ldw r0, #5
+	65044 (0xfe14)	6080
+	65046 (0xfe16)	0005
+30	stw r0, (bp)-2
+	65048 (0xfe18)	606d
+	65050 (0xfe1a)	fffe
+31	ldw r0, #8
+	65052 (0xfe1c)	6080
+	65054 (0xfe1e)	0008
+32	stw r0, (bp)-4
+	65056 (0xfe20)	606d
+	65058 (0xfe22)	fffc
+33	ldw r0, (bp)-2
+	65060 (0xfe24)	60ed
+	65062 (0xfe26)	fffe
+34	stw r0, -(sp)
+	65064 (0xfe28)	604f
+35	jsr @printval_
+	65066 (0xfe2a)	0a50
+	65068 (0xfe2c)	fe3e
+36	adi sp, sp, #2
+	65070 (0xfe2e)	4eff
+	65072 (0xfe30)	0002
+37	ldw sp, bp
+	65074 (0xfe32)	6f9d
+38	ldw bp, (sp)+
+	65076 (0xfe34)	6dbf
+39	trp #EXIT_EXC
+	65078 (0xfe36)	0b00
+	65080 (0xfe38)	0040
+40	jea @main_
+	65082 (0xfe3a)	0950
+	65084 (0xfe3c)	fe00
+41	//============================================================================================
+42	
+43	//fonction printval :
+44	printval_ stw bp, -(sp)
+	65086 (0xfe3e)	6d4f
+45	          ldw bp, sp
+	65088 (0xfe40)	6d9f
+46	// char toto[7];
+47	   // riserve 7+1 = 8 caracthres en pile
+48	   // (entier pair supirieur ` 7 demandi pour pas disaligner pile)
+49	        adi sp, sp, #-8   // riserve place pour text sur pile (8 octets); 
+	65090 (0xfe42)	4eff
+	65092 (0xfe44)	fff8
+50	                          // diplacement du dibut du tableau est -8
+51	
+52	// itoa(value, text, 10); // appelle itoa avec i = value, p = text, b = 10
+53	
+54	        ldw r0, #10       // charge 10 (pour base dicimale) dans r0
+	65094 (0xfe46)	6080
+	65096 (0xfe48)	000a
+55	        stw r0, -(sp)     // empile contenu de r0 (paramhtre b)
+	65098 (0xfe4a)	604f
+56	
+57	        adi bp, r0, #-8   // r0 = bp - 8 = adresse du tableau text
+	65100 (0xfe4c)	4ed0
+	65102 (0xfe4e)	fff8
+58	        stw r0, -(sp)     // empile contenu de r0 (paramhtre p)
+	65104 (0xfe50)	604f
+59	
+60	        ldw r0, (bp)4   // charge r0 avec x
+	65106 (0xfe52)	60ed
+	65108 (0xfe54)	0004
+61	        stw r0, -(sp)     // empile contenu de r0 (paramhtre i)
+	65110 (0xfe56)	604f
+62	
+63	        jsr @itoa_        // appelle fonction itoa d'adresse itoa_
+	65112 (0xfe58)	0a50
+	65114 (0xfe5a)	fe74
+64	
+65	        adi sp, sp, #6    // nettoie la pile des paramhtres 
+	65116 (0xfe5c)	4eff
+	65118 (0xfe5e)	0006
+66	                          // de taille totale 6 octets
+67	
+68	// print(text);
+69	
+70	        adi bp, r0, #-8   // r0 = bp - 8 = adresse du tableau text
+	65120 (0xfe60)	4ed0
+	65122 (0xfe62)	fff8
+71	        stw r0, -(sp)     // empile contenu de r0 (paramhtre p)
+	65124 (0xfe64)	604f
+72	        
+73	        jsr @print_       // appelle fonction print d'adresse print_
+	65126 (0xfe66)	0a50
+	65128 (0xfe68)	fed4
+74	
+75	        adi sp, sp, #2    // nettoie la pile des paramhtres
+	65130 (0xfe6a)	4eff
+	65132 (0xfe6c)	0002
+76	                          // de taille totale 2 octets
+77	        ldw sp, bp
+	65134 (0xfe6e)	6f9d
+78	        ldw bp, (sp)+
+	65136 (0xfe70)	6dbf
+79	        rts
+	65138 (0xfe72)	0200
+80	
+81	
+82	// FONCTIONS PRi-DiFINIES EN LANAGAGE D'ASSEMBLAGE
+83	
+84	// char *itoa(int i, char *p, int b);
+85	//
+86	// i entier ` convertir
+87	// p pointeur du tampon dij` alloui en mimoire oy copier la channe de caracthres
+88	// b base de numiration utilisie (de 2 ` 36 inclus car il n'y a que 36 chiffres; par exemple: 2, 4, 8, 10, 16)
+89	//
+90	// Convertit un entier en channe de caracthres codie en ASCII
+91	// (cette fonction fait partie de la bibliothhque standard portable C stdlib et est normalement icrite en C).
+92	// Limitation ici: b doit jtre pair.
+93	// Retourne le pointeur sur la channe de caracthre
+94	//
+95	// Ce programme terminera automatiquement la channe de caracthres par NUL;
+96	// le tampon devrait avoir une taille suffisante (par exemple sizeof(int)*8+1 octets pour b=2)
+97	// Si la base = 10 et que l'entier est nigatif la channe de caracthres est pricidie d'un signe moins (-);
+98	// pour toute autre base, la valeur i est considirie non signie.
+99	// Les 36 chiffres utilisables sont dans l'ordre: 0, 1, 2,..., 9, A, B, C, ... , Z .
+100	// Aucune erreur n'est girie.
+101	     
+102	
+103	ITOA_I      equ 4      // offset du paramhtre i
+104	ITOA_P      equ 6      // offset du paramhtre p
+105	ITOA_B      equ 8      // offset du paramhtre b
+106	
+107	ASCII_MINUS equ 45     // code ASCII de -
+108	ASCII_PLUS  equ 43     // code ASCII de +
+109	ASCII_SP    equ 32     // code ASCII d'espace SP
+110	ASCII_0     equ 48     // code ASCII de ziro (les autres chiffres jusqu'` 9 suivent dans l'ordre)
+111	ASCII_A     equ 65     // code ASCII de A (les autres lettres jusqu'` Z suivent dans l'ordre alphabitique)
+112	
+113	// LNK: crie environnement du main pour permettre des variables locales 
+114	// mais sans encore les riserver
+115	itoa_   stw bp, -(sp)
+	65140 (0xfe74)	6d4f
+116	        ldw bp, sp
+	65142 (0xfe76)	6d9f
+117	
+118	// ricupiration des paramhtres depuis pile vers registres
+119	        ldw r0, (bp)ITOA_I    // r0 = i    
+	65144 (0xfe78)	60ed
+	65146 (0xfe7a)	0004
+120	        ldw r1, (bp)ITOA_B    // r1 = b
+	65148 (0xfe7c)	61ed
+	65150 (0xfe7e)	0008
+121	        
+122	// ghre le signe: normalement itoa ghre des int c'est ` dire des entiers signis, 
+123	// mais en fait seulement pour b=10;
+124	// dans ce cas calcule le signe dans r3 et charge r0 avec la valeur absolue de i
+125	        ldq ASCII_SP, r3      // code ASCII de espace (SPace) -> r3
+	65152 (0xfe80)	2320
+126	        ldq 10, wr            // 10 -> wr
+	65154 (0xfe82)	2e0a
+127	        cmp r1, wr            // charge les indicateurs de b - 10
+	65156 (0xfe84)	4f1e
+128	        bne NOSIGN-$-2        // si non igal (donc si b != 10) saute en NOSIGN, sinon calcule signe
+	65158 (0xfe86)	130c
+129	        ldq ASCII_PLUS, r3    // charge le code ASCII du signe plus + dans r3
+	65160 (0xfe88)	232b
+130	        tst r0                // charge les indicateurs de r0 et donc de i
+	65162 (0xfe8a)	0c10
+131	        bge POSIT-$-2         // saute en POSIT si i >= 0
+	65164 (0xfe8c)	1404
+132	        neg r0, r0            // change le signe de r0
+	65166 (0xfe8e)	4700
+133	        ldq ASCII_MINUS, r3   // charge le code ASCII du signe moins - dans r3
+	65168 (0xfe90)	232d
+134	POSIT   NOP                   // r3 = code ASCII de signe: SP pour aucun, - ou +
+	65170 (0xfe92)	0000
+135	
+136	
+137	// convertit l'entier i en chiffres et les empile de droite ` gauche
+138	NOSIGN  ldw r2, r0            // r2 <- r0
+	65172 (0xfe94)	6290
+139	CNVLOOP ldw r0, r2            // r0 <- r2
+	65174 (0xfe96)	6092
+140	   
+141	   // effectue "criativement" la division par b supposi pair (car l'instruction div est hilas signie ...)
+142	   // d=2*d' , D = d * q + r  , D = 2*D'+r" , D' = d' * q + r' => r = 2*r'+r"
+143	   // un bug apparant avec SRL R0, R0 avec R0 = 2 : met CF ` 1 !!
+144	        srl r1, r1            // r1 = b/2
+	65176 (0xfe98)	4211
+145	        ani r0, r4, #1        // ANd Immidiate entre r0 et 00...01 vers r4:
+	65178 (0xfe9a)	4c04
+	65180 (0xfe9c)	0001
+146	                              // bit n00 de r0 -> r4; r4 = reste" de r0/2
+147	        srl r0, r0            // r0 / 2 -> r0
+	65182 (0xfe9e)	4200
+148	        div r0, r1, r2        // quotient = r0 / r1 -> r2, reste' = r0 % r1 -> r0
+	65184 (0xfea0)	a012
+149	        shl r0, r0            // r0 = 2 * reste'
+	65186 (0xfea2)	4600
+150	        add r0, r4, r0        // r0 = reste = 2 * reste' + reste" => r0 = chiffre
+	65188 (0xfea4)	e040
+151	        shl r1, r1            // r1 = b
+	65190 (0xfea6)	4611
+152	
+153	        adq -10, r0           // chiffre - 10 -> r0 
+	65192 (0xfea8)	30f6
+154	        bge LETTER-$-2        // saute en LETTER si chiffre >= 10
+	65194 (0xfeaa)	1404
+155	        adq 10+ASCII_0, r0    // ajoute 10 => r0 = chiffre, ajoute code ASCII de 0 
+	65196 (0xfeac)	303a
+156	                              // => r0 = code ASCII de chiffre
+157	        bmp STKCHR-$-2        // saute en STKCHR 
+	65198 (0xfeae)	1102
+158	
+159	LETTER  adq ASCII_A, r0       // r0 = ASCII(A) pour chiffre = 10, ASCII(B) pour 11 ...
+	65200 (0xfeb0)	3041
+160	                              // ajoute code ASCII de A => r = code ASCII de chiffre
+161	STKCHR  stw r0, -(sp)         // empile code ASCII du chiffre 
+	65202 (0xfeb2)	604f
+162	                              // (sur un mot complet pour pas disaligner pile)
+163	        tst r2                // charge les indicateurs en fonction du quotient ds r2)
+	65204 (0xfeb4)	0c12
+164	        bne CNVLOOP-$-2       // boucle si quotient non nul; sinon sort
+	65206 (0xfeb6)	13de
+165	
+166	// les caracthres sont maintenant empilis : gauche en haut et droit en bas
+167	
+168	// recopie les caracthres dans le tampon dans le bon ordre: de gauche ` droite
+169	        ldw r1, (bp)ITOA_P    // r1 pointe sur le dibut du tampon dij` alloui 
+	65208 (0xfeb8)	61ed
+	65210 (0xfeba)	0006
+170	        stb r3, (r1)+         // copie le signe dans le tampon
+	65212 (0xfebc)	5331
+171	CPYLOOP ldw r0, (sp)+         // dipile code du chiffre gauche (sur un mot) dans r0
+	65214 (0xfebe)	60bf
+172	        stb r0, (r1)+         // copie code du chiffre dans un Byte du tampon de gauche ` droite
+	65216 (0xfec0)	5031
+173	        cmp sp, bp            // compare sp et sa valeur avant empilement des caracthres qui itait bp
+	65218 (0xfec2)	4ffd
+174	        bne CPYLOOP-$-2       // boucle s'il reste au moins un chiffre sur la pile
+	65220 (0xfec4)	13f8
+175	        ldq NUL, r0           // charge le code du caracthre NUL dans r0
+	65222 (0xfec6)	2000
+176	        stb r0, (r1)+         // sauve code NUL pour terminer la channe de caracthres
+	65224 (0xfec8)	5031
+177	
+178	// termine
+179	        ldw r0, (bp)ITOA_P    // retourne le pointeur sur la channe de caracthres
+	65226 (0xfeca)	60ed
+	65228 (0xfecc)	0006
+180	
+181	    // UNLINK: fermeture de l'environnement de la fonction itoa
+182	        ldw sp, bp            // sp <- bp : abandonne infos locales; sp pointe sur ancinne valeur de bp
+	65230 (0xfece)	6f9d
+183	        ldw bp, (sp)+         // dipile ancienne valeur de bp dans bp; sp pointe sur adresse de retour
+	65232 (0xfed0)	6dbf
+184	
+185	        rts                   // retourne au programme appelant
+	65234 (0xfed2)	0200
+186	
+187	//-----------------------------------------------------------------------------------------------------
+188	
+189	// void print(char* p)     // imprime le texte pointi par paramhtre p
+190	
+191	// pripare l'environnement de la fonction appelie (prologue) :
+192	
+193	print_     LDQ 0, R1      // R1 = taille donnies locales (ici 0) de fonction appelie
+	65236 (0xfed4)	2100
+194	
+195	     // LINK R1        // crie et lie l'environnement de fonction appelie
+196	           STW BP, -(SP)  // empile le contenu du registre BP
+	65238 (0xfed6)	6d4f
+197	           LDW BP, SP     // charge contenu SP ds BP qui pointe sur sa sauvegarde
+	65240 (0xfed8)	6d9f
+198	           SUB SP, R1, SP // riserve R1 octets sur la pile pour la variable locale z
+	65242 (0xfeda)	ff1f
+199	
+200	// charge R0 avec le paramhtre p de diplacement 4
+201	           LDW R0, (BP)4  // R0 = M[BP + 4]
+	65244 (0xfedc)	60ed
+	65246 (0xfede)	0004
+202	
+203	// affiche texte pointi par R0
+204	           TRP #WRITE_EXC // lance trappe n0 WRITE_EXC: affiche texte d'adresse R0
+	65248 (0xfee0)	0b00
+	65250 (0xfee2)	0042
+205	
+206	// fin de la fonction (ipilogue) :
+207	
+208	    // UNLINK 
+209	           LDW SP, BP    // charge SP avec contenu de BP: abandon infos locales
+	65252 (0xfee4)	6f9d
+210	           LDW BP, (SP)+ // dipile ancien BP dans BP
+	65254 (0xfee6)	6dbf
+211	
+212	           RTS  // retour au programme appelant
+	65256 (0xfee8)	0200
+
+
+
+Tables des identificateurs 
+    identificateurs définis :
+	ASCII_0 : 48 (0x30)
+	LOAD_ADRS : 65024 (0xfe00)
+	NIL : 0 (0x0)
+	CPYLOOP : 65214 (0xfebe)
+	READ_EXC : 65 (0x41)
+	POSIT : 65170 (0xfe92)
+	WR : r14
+	sp : r15
+	STKCHR : 65202 (0xfeb2)
+	NOSIGN : 65172 (0xfe94)
+	NUL : 0 (0x0)
+	LETTER : 65200 (0xfeb0)
+	ASCII_SP : 32 (0x20)
+	STACK_ADRS : 4096 (0x1000)
+	SP : r15
+	bp : r13
+	itoa_ : 65140 (0xfe74)
+	WRITE_EXC : 66 (0x42)
+	CNVLOOP : 65174 (0xfe96)
+	main_ : 65024 (0xfe00)
+	BP : r13
+	ASCII_PLUS : 43 (0x2b)
+	ASCII_MINUS : 45 (0x2d)
+	printval_ : 65086 (0xfe3e)
+	ITOA_P : 6 (0x6)
+	ASCII_A : 65 (0x41)
+	NULL : 0 (0x0)
+	EXIT_EXC : 64 (0x40)
+	print_ : 65236 (0xfed4)
+	ITOA_I : 4 (0x4)
+	ITOA_B : 8 (0x8)
+	wr : r14
+
+
+
+Termine ...
+Fichier résultat : output.iup

@@ -1,0 +1,37 @@
+do
+	integer i, j, maximum
+	boolean k
+	array [5..13, 25 .. 72] t, tbis
+
+	function integer fMax (adr x: integer, y: integer)
+		integer b, result
+		if x > y
+		then 
+			result = x
+    	else
+    		result = y
+    		return (0)
+		fi
+	end
+
+	procedure theEnd()
+		integer bob
+		array[3..12, 10..56] testarray
+		function integer testFunc(x: integer, bob: integer)
+			return (3)
+		end
+    		write "that's all !!"
+	end
+
+	for i in 0..5 do
+		t[i] = false
+	end
+
+	j = t[5]
+	tbis = t
+	tbis[5,j] = 25
+	j = i*i/j+j
+	maximum = fMax(t[5], i)
+	write maximum
+	theEnd()
+end
