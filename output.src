@@ -26,9 +26,6 @@ main_		ldw sp, #STACK_ADRS // pile sera au dessus de STACK_ADRS
         	stw bp, -(sp) //stat chain
         	ldw bp, sp
 adi sp, sp, #-18 //allocation de l'espace pour t
-adi sp, sp, #-2 //allocation de l'espace pour i
-ldw r0, #1
-stw r0, (bp)-2
 //func init
 ldw r10, #0// function depth : 1 , Scope depth : 0
 jsr @function_bla_ //func call
@@ -55,6 +52,7 @@ add r10, r0, r10
 bmp stat_calc_start_1-$-2
 stat_calc_end_1 stw r1, -(sp) // stat chain
 ldw bp, sp // maj bas de pile
+adi sp, sp, #-2 //allocation de l'espace pour i
 //func init
 ldw r10, #0// function depth : 2 , Scope depth : 1
 jsr @function_sum_ //func call
@@ -80,75 +78,7 @@ bmp stat_calc_start_2-$-2
 stat_calc_end_2 stw r1, -(sp) // stat chain
 ldw bp, sp // maj bas de pile
 adi sp, sp, #-2 //allocation de l'espace pour j
-ldw r0, #25
-stw r0, (bp)-2
-// appel de la variable j
-// Profondeur variable : 2
-// Profondeur scope : 2
-ldw r1, bp
-ldw r0, (r1)-2
-stw r0, -(sp)
-//ArrayCellAccess start
-ldw r0, #0
-stw r0, -(sp)
-ldw r0, #5
-ldw r1, #1
-sub r0, r1, r0
-ldw r1, #1
-mul r0, r1, r0
-ldw r1, (sp)+
-add r0, r1, r0
-stw r0, -(sp)
-//ArrayCellAccess end
-ldw r0, (sp)+
-ldw r1, bp
-adi r1, r1, #2
-ldw r1, (r1)
-adi r1, r1, #2
-ldw r1, (r1)
-ldw r2, #20
-sub r1, r2, r1
-add r1, r0, r1
-add r1, r0, r1
-ldw r0, (sp)+
-stw r0, (r1)
-//ArrayCellAccess start
-ldw r0, #0
-stw r0, -(sp)
-ldw r0, #5
-ldw r1, #1
-sub r0, r1, r0
-ldw r1, #1
-mul r0, r1, r0
-ldw r1, (sp)+
-add r0, r1, r0
-stw r0, -(sp)
-//ArrayCellAccess end
-stw r0, -(sp)
-ldw r1, bp
-adi r1, r1, #2
-ldw r1, (r1)
-adi r1, r1, #2
-ldw r1, (r1)
-ldw r2, #20
-sub r1, r2, r1
-add r1, r0, r1
-add r1, r0, r1
-ldw r0, (r1)
-stw r0, -(sp)
-// appel de la variable i
-// Profondeur variable : 0
-// Profondeur scope : 2
-ldw r1, bp
-adi r1, r1, #2
-ldw r1, (r1)
-adi r1, r1, #2
-ldw r1, (r1)
-ldw r0, (r1)-2
-stw r0, -(sp)
-ldw r2, (sp)+
-ldw r1, (sp)+
-add r1, r2, r0
+ldw r0, #true
 
 ldw sp, bp //maj sommet de pile
 adi sp, sp, #2 // stat chain
