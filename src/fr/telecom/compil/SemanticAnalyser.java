@@ -32,7 +32,7 @@ public class SemanticAnalyser
 	public static void checkScope(SyntaxicTree AST, SymbolTable table)
 	{
 		try {
-			//checkDeclarations(AST.getChild("DECLARATIONS"), currentScope, table);
+			checkDeclarations(AST.getChild("DECLARATIONS"), currentScope, table);
 			checkInstructions(AST.getChild("INSTRUCTIONS"), currentScope, table);
 
 			SyntaxicTree declTree = AST.getChild("DECLARATIONS");
@@ -79,7 +79,6 @@ public class SemanticAnalyser
 	private static void checkDeclarations(SyntaxicTree AST, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadArrayBoundsDeclaration, BadTypeReturnFunction
 	{
 		checkArrayBoundsCroiss(AST, scopeId, table);
-		checkTypeReturnFunction(AST, scopeId, table);
 
 
 
@@ -274,7 +273,7 @@ public class SemanticAnalyser
 						{
 							int valIndexStat = Integer.valueOf(child.getLabel());
 							int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
-							if(valIndexStat < min || valIndexStat >= max)
+							if(valIndexStat < min || valIndexStat > max)
 							{
 								System.out.println(min +" " + valIndexStat + " " + max );
 								throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
@@ -305,7 +304,7 @@ public class SemanticAnalyser
 							{
 								int valIndexStat = Integer.valueOf(child.getLabel());
 								int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
-								if(valIndexStat < min || valIndexStat >= max)
+								if(valIndexStat < min || valIndexStat > max)
 								{
 									throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
 								}

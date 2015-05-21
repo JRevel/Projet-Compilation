@@ -5,7 +5,8 @@ do
 		integer i
 		function integer sum( )
 			integer j
-			return (true)
+			j = t[10]
+			return (j)
 		end
 		return (sum( ))
 	end
