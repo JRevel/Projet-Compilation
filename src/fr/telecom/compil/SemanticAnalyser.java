@@ -23,35 +23,41 @@ import fr.telecom.compil.type.VarType;
 public class SemanticAnalyser
 {
 	private static int currentScope = 0;
-	
+
 	public static void initSemanticAnalysis()
 	{
 		currentScope = 0;
 	}
-	
+
 	public static void checkScope(SyntaxicTree AST, SymbolTable table)
 	{
 		try {
+			checkDeclarations(AST.getChild("DECLARATIONS"), currentScope, table);
 			checkInstructions(AST.getChild("INSTRUCTIONS"), currentScope, table);
+
 			SyntaxicTree declTree = AST.getChild("DECLARATIONS");
 			for(SyntaxicTree functionTree : declTree.getChildren("FUNCTION"))
 			{
 				currentScope++;
+
 				checkScope(functionTree, table);
 				checkReturn(functionTree, currentScope, table);
+				checkTypeReturnFunction(functionTree, currentScope, table);
 			}
 			for(SyntaxicTree procTree : declTree.getChildren("PROC"))
 			{
 				currentScope++;
 				checkScope(procTree, table);
 			}
+			//checkDeclarations(AST.getChild("DECLARATIONS"), currentScope-1, table);
+
 		} catch (SemanticException e) {
 			System.err.println(e.getMessage());
 		} catch (SymbolNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void checkInstructions(SyntaxicTree AST, int scopeId, SymbolTable table) throws VarNotFoundException, BadNumberArgumentsException, SymbolNotFoundException, WrongTypeArgumentsException, WrongTypeAffectationException, BadIndexArrayAccessStatique, NotIntegerInOperationException, BooleanIfConditionException, BadNbDimArray
 	{
 		checkVarDef(AST, scopeId, table);
@@ -65,22 +71,21 @@ public class SemanticAnalyser
 		checkTypeIfCondition(AST, scopeId, table);
 		checkTypeLowerGreaterOperation(AST, scopeId, table);
 		checkForRange(AST, scopeId, table);
-		
+
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkInstructions(AST.getChild(i), scopeId, table);
 	}
-	
+
 	private static void checkDeclarations(SyntaxicTree AST, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadArrayBoundsDeclaration, BadTypeReturnFunction
 	{
 		checkArrayBoundsCroiss(AST, scopeId, table);
-		checkTypeReturnFunction(AST, scopeId, table);
-		
+
 
 
 		for(int i=0; i<AST.getChildCount(); i++)
 			checkDeclarations(AST.getChild(i), scopeId, table);
 	}
-	
+
 	private static void checkVarDef(SyntaxicTree varTree, int scopeId, SymbolTable table) throws VarNotFoundException
 	{
 		// Les utilisations de variables se font toujours via des des noeuds VAR_REF pour les integer et les boolean,
@@ -102,7 +107,7 @@ public class SemanticAnalyser
 				throw new VarNotFoundException(nameTree.getLineNumber(), name, scopeId);
 		}
 	}
-	
+
 	private static void checkNbArgFunc(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadNumberArgumentsException
 	{
 		if (varTree.getLabel().equals("FUNC_CALL"))
@@ -181,24 +186,24 @@ public class SemanticAnalyser
 			else if (ChildLeft.getLabel().equals("FUNC_CALL"))
 				TypeLeft = table.getFunction(ChildLeft.getChild("NAME").getChild().getLabel(), scopeId).returnType;
 			else TypeLeft = new IntegerType();
-			
+
 			if (ChildRight.getLabel().equals("VAR_REF"))
 				TypeRight = table.getSymbol(ChildRight.getChild().getLabel(), scopeId).type;
 			else if (ChildRight.getLabel().equals("FUNC_CALL"))
 				TypeRight = table.getFunction(ChildRight.getChild("NAME").getChild().getLabel(), scopeId).returnType;
 			else TypeRight = new IntegerType();
-			
+
 			if (!TypeLeft.getName().equals(TypeRight.getName()))
 				throw new WrongTypeAffectationException(varTree.getLineNumber(), TypeRight,TypeLeft);
 		}
 	}
-	
+
 	private static void checkReturn(SyntaxicTree varTree, int scopeId, SymbolTable table) throws NoReturnException, SymbolNotFoundException
 	{
 		String functionName = varTree.getChild("PROTOTYPE").getChild("NAME").getChild(0).getLabel();
 		checkReturn(varTree.getChild("INSTRUCTIONS"), functionName);
 	}
-	
+
 	private static void checkReturn(SyntaxicTree varTree, String functionName) throws NoReturnException
 	{
 		SyntaxicTree lastChild = varTree.getChild(varTree.getChildCount()-1);
@@ -215,7 +220,7 @@ public class SemanticAnalyser
 			throw new NoReturnException(functionName, 0);
 		}
 	}
-	
+
 	//Ajout par Didier
 	private static void checkArrayBoundsCroiss(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadArrayBoundsDeclaration
 	{
@@ -268,7 +273,7 @@ public class SemanticAnalyser
 						{
 							int valIndexStat = Integer.valueOf(child.getLabel());
 							int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
-							if(valIndexStat < min || valIndexStat >= max)
+							if(valIndexStat < min || valIndexStat > max)
 							{
 								System.out.println(min +" " + valIndexStat + " " + max );
 								throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
@@ -299,7 +304,7 @@ public class SemanticAnalyser
 							{
 								int valIndexStat = Integer.valueOf(child.getLabel());
 								int min = bornes.get(dim)[0], max = bornes.get(dim)[1];
-								if(valIndexStat < min || valIndexStat >= max)
+								if(valIndexStat < min || valIndexStat > max)
 								{
 									throw new BadIndexArrayAccessStatique(varTree.getLineNumber());
 								}
@@ -314,7 +319,7 @@ public class SemanticAnalyser
 			}
 		}
 	}
-	
+
 	//Ajout par Didier
 	private static void checkTypeReturnFunction(SyntaxicTree varTree, int scopeId, SymbolTable table) throws SymbolNotFoundException, BadTypeReturnFunction
 	{
@@ -323,75 +328,119 @@ public class SemanticAnalyser
 			SyntaxicTree childProto = varTree.getChild("PROTOTYPE");
 			SyntaxicTree childInstru = varTree.getChild("INSTRUCTIONS");
 			String retour;
-			scopeId++;
-			
-			if(childInstru.getChild("RETURN").getChild().getLabel().equals("VAR_REF"))
+			String type = null;
+
+			if(childInstru.getChild("RETURN").getChild().getLabel().equals("VAR_REF") )
 			{
 				retour = childInstru.getChild("RETURN").getChild().getChild().getLabel();
+
+			}
+			else if(childInstru.getChild("RETURN").getChild().getLabel().equals("ARRAY_ACCESS"))
+			{
+				retour = childInstru.getChild("RETURN").getChild("ARRAY_ACCESS").getChild("NAME").getChild().getLabel();
+				return;
+
+			}
+			else if (childInstru.getChild("RETURN").getChild().getLabel().equals("FUNC_CALL"))
+			{
+				retour = childInstru.getChild("RETURN").getChild("FUNC_CALL").getChild("NAME").getChild().getLabel();
+				VarType retourtype= table.getFunction(retour, scopeId).returnType;
+				type = retourtype.getName();
+	
 			}
 			else retour = childInstru.getChild("RETURN").getChild().getLabel();
-			
-			//La fonction renvoi un integer
-			if (childProto.getChild("TYPE").getChild().getLabel().equals("integer"))
+
+			//La fonction fait un call à une autre
+
+			if (childInstru.getChild("RETURN").getChild().getLabel().equals("FUNC_CALL"))
 			{
 				
-				if(table.hasSymbol(retour, scopeId))
+				if (childProto.getChild("TYPE").getChild().getLabel().equals("integer"))
 				{
-					if((table.getSymbol(retour, scopeId).type instanceof IntegerType) == false)
+					if(type != "integer")
 					{
 						throw new BadTypeReturnFunction(varTree.getLineNumber());
 					}
-						
 				}
 				else
 				{
-					//déclanche un exception si ce n'est pas un entier
-					try
+					if (childProto.getChild("TYPE").getChild().getLabel().equals("boolean"))
 					{
-						Integer.parseInt(retour);
-					}
-					catch (NumberFormatException e)
-					{
-						throw new BadTypeReturnFunction(varTree.getLineNumber());
-					}
-				}
-			}
-			else
-			{
-				//La fonction renvoi un boolean
-				if (childProto.getChild(0).getLabel().equals("boolean"))
-				{
-					if(table.hasSymbol(retour, scopeId))
-					{
-						if((table.getSymbol(retour, scopeId).type instanceof BooleanType) == false)
+						if(type != "boolean")
 						{
 							throw new BadTypeReturnFunction(varTree.getLineNumber());
 						}
-							
-					}
-					else
-					{
-						if (retour != "true" && retour != "false")
-							throw new BadTypeReturnFunction(varTree.getLineNumber());
 					}
 				}
-				//Array
-				else
+				
+				
+				
+			}
+			else
+			{
+
+				//La fonction renvoi un integer
+				if (childProto.getChild("TYPE").getChild().getLabel().equals("integer"))
 				{
+
 					if(table.hasSymbol(retour, scopeId))
 					{
-						if((table.getSymbol(retour, scopeId).type instanceof ArrayType) == false)
+						if((table.getSymbol(retour, scopeId).type instanceof IntegerType) == false)
 						{
 							throw new BadTypeReturnFunction(varTree.getLineNumber());
-						}		
+						}
+
 					}
 					else
 					{
-						throw new BadTypeReturnFunction(varTree.getLineNumber());
+						//déclanche un exception si ce n'est pas un entier
+						try
+						{
+							Integer.parseInt(retour);
+						}
+						catch (NumberFormatException e)
+						{
+							throw new BadTypeReturnFunction(varTree.getLineNumber());
+						}
+					}
+				}
+				else
+				{
+					//La fonction renvoi un boolean
+					if (childProto.getChild(0).getLabel().equals("boolean"))
+					{
+						if(table.hasSymbol(retour, scopeId))
+						{
+							if((table.getSymbol(retour, scopeId).type instanceof BooleanType) == false)
+							{
+								throw new BadTypeReturnFunction(varTree.getLineNumber());
+							}
+
+						}
+						else
+						{
+							if (retour != "true" && retour != "false")
+								throw new BadTypeReturnFunction(varTree.getLineNumber());
+						}
+					}
+					//Array
+					else
+					{
+						if(table.hasSymbol(retour, scopeId))
+						{
+							if((table.getSymbol(retour, scopeId).type instanceof ArrayType) == false)
+							{
+								throw new BadTypeReturnFunction(varTree.getLineNumber());
+							}		
+						}
+						else
+						{
+							throw new BadTypeReturnFunction(varTree.getLineNumber());
+						}
 					}
 				}
 			}
-			
+
 
 		}
 	}
@@ -503,8 +552,8 @@ public class SemanticAnalyser
 			{	
 				rangeMin = Integer.valueOf(childLeft.getLabel());
 				rangeMax = Integer.valueOf(childRight.getLabel());
-		//		if(rangeMin > rangeMax)
-		//			throw new RangeIntException();
+				//		if(rangeMin > rangeMax)
+				//			throw new RangeIntException();
 			}
 		}
 	}

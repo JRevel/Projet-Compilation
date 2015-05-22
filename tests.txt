@@ -1,16 +1,14 @@
 do
-	integer i
+		
 	array[1..10] t
 	function integer bla( )
+		integer i
 		function integer sum( )
 			integer j
-			j=25
-			t[5] = j
-			return (t[5]+i)
+			j = t[10]
+			return (j)
 		end
 		return (sum( ))
 	end
-
-	i = 1
 	write bla( )
 end
