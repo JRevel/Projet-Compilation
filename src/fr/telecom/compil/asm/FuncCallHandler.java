@@ -15,7 +15,6 @@ public class FuncCallHandler implements TreeHandler
 					+ "stw r0, -(sp)\n";
 		}
 		FunctionSymbol function = scope.getFunction(tree.getChild("NAME").getChild().getLabel());
-		System.out.println(tree.getChild("NAME").getChild().getLabel());
 		result += "ldw r10, #" + (scope.getDepth()-function.scopeDepth+1) + ""
 				+ "// " + "function depth : " + function.scopeDepth + " " + ", Scope depth : " + scope.getDepth() + "\n";
 		result += "jsr @function_" + function.name + "_ //func call\n"
